@@ -1,0 +1,19 @@
+{
+  "name": "kintone-query-builder",
+  "version": "1.0.0",
+  "description": "kintone query builder and parser",
+  "main": "./dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "kintone"
+  ],
+  "author": "toyokumo",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-typescript": "^5.0.1",
+    "typescript": "^3.5.3"
+  }
+}

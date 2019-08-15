@@ -1,0 +1,8 @@
+* さんこうになる
+- プロジェクト構成 https://www.typescriptlang.org/docs/handbook/gulp.html
+- typescript https://www.typescriptlang.org/docs/home.html
+* TODO やる
+- testのセットアップ
+- browserify, uglify???
+- how to publish
+- license
