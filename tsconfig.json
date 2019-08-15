@@ -5,6 +5,9 @@
     ],
     "compilerOptions": {
         "noImplicitAny": true,
-        "target": "es5"
+        "target": "es2015",
+	"esModuleInterop": true,
+	"strict": true,
+	"module": "commonjs"
     }
 }

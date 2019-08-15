@@ -2,7 +2,8 @@
 - プロジェクト構成 https://www.typescriptlang.org/docs/handbook/gulp.html
 - typescript https://www.typescriptlang.org/docs/home.html
 * TODO やる
-- testのセットアップ
+- とりあえず実装する前にこの構成でちゃんとライブラリとして配布できるかを試してかくにん
+- testのセットアップ. とりあえず雑にやったけど... https://github.com/ChiragRupani/TSUnitTestsSetup/tree/master/HelloJest
 - browserify, uglify???
 - how to publish
 - license
