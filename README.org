@@ -1,3 +1,8 @@
+* build
+- gulp
+- node dist/main.js
+* test
+- npm t
 * さんこうになる
 - プロジェクト構成 https://www.typescriptlang.org/docs/handbook/gulp.html
 - typescript https://www.typescriptlang.org/docs/home.html

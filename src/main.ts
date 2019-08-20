@@ -1,3 +1,3 @@
-import { sayHello } from './greet';
+import { Tokenizer } from './tokenizer';
 
-console.log(sayHello('TypeScript'));
+console.log(new Tokenizer('field like "TypeScript"').tokenize());
