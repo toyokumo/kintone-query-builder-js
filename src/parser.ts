@@ -1,34 +1,4 @@
-enum KintoneClauseType {
-    Eq,
-    NotEq,
-    Gt,
-    Lt,
-    Gte,
-    Lte,
-    In,
-    NotIn,
-    Like,
-    NotLike
-}
-
-interface KintoneClause {
-    ctype: KintoneClauseType;
-    lhs: string; // field code
-    rhs: string | number | Array<string|number>;
-}
-
-// TODO: this may be strict ???
-// type KintoneClause
-//     = KintoneEqClause
-//     | KintoneNotEqClause
-//     | KintoneGtClause
-//     | KintoneLtClause
-//     | KintoneGteClause
-//     | KintoneLteClause
-//     | KintoneInClause
-//     | KintoneNotInClause
-//     | KintoneLikeClause
-//     | KintoneNotLikeClause
+import { KintoneQueryTokenizer } from "./tokenizer";
 
 enum KintoneOrderByType { Desc, Asc }
 
@@ -37,9 +7,8 @@ interface: KintoneOrderBy {
     fields: Array<string>;
 }
 
-// TODO: add 'and' 'or'
 interface KintoneParsedQuery {
-    query: KintoneClause;
+    query: string;
     orderBy: KintoneOrderBy;
     limit?: number;
     offset?: number;
@@ -49,7 +18,7 @@ class KintoneQueryParser {
     private tokens: Array<string>;
     private idx: number;
     public constructor(source: string) {
-	this.tokens = source;
+	this.tokens = new KintoneQueryTokenizer(source).tokenize();
 	this.idx = 0;
     }
     private peek() : string {
@@ -62,7 +31,7 @@ class KintoneQueryParser {
     private isEof() : boolean {
 	return tokens.length == this.idx;
     }
-    private parseClause() : KintoneClause {
+    private parseClause() : string {
     }
     private parseOrderBy() : KintoneOrderBy {
     }

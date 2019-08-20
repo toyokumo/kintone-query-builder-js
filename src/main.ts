@@ -1,3 +1,3 @@
-import { Tokenizer } from './tokenizer';
+import { KintoneQueryTokenizer } from './tokenizer';
 
-console.log(new Tokenizer('field like "TypeScript"').tokenize());
+console.log(new KintoneQueryTokenizer('field like "TypeScript"').tokenize());

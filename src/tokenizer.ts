@@ -1,4 +1,4 @@
-export class Tokenizer {
+export class KintoneQueryTokenizer {
     private buffer: string;
     private idx: number;
     public constructor(source: string) {
@@ -29,11 +29,11 @@ export class Tokenizer {
     }
     private getStringToken(): string {
 	let acc : string = "";
-	acc += this.poll(); // skip '\"'
+	acc += this.poll(); // open "
 	while(this.peek()!=='\"') {
 	    acc += this.poll();
 	}
-	this.poll(); // skip '\"'
+	acc += this.poll(); // close "
 	return acc;
     }
     private getNumberToken(): string {
