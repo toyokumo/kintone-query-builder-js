@@ -4,14 +4,14 @@ enum KintoneOrderByType { Desc = 0, Asc }
 
 interface KintoneOrderBy {
     otype: KintoneOrderByType;
-    fields?: Array<string>;
+    fields: Array<string>;
 }
 
 interface KintoneParsedQuery {
     query: string;
     orderBy: KintoneOrderBy;
-    limit?: number;
-    offset?: number;
+    limit: number;
+    offset: number;
 }
 
 export class KintoneQueryParser {
@@ -35,10 +35,10 @@ export class KintoneQueryParser {
         return "";
     }
     private parseOrderBy(): KintoneOrderBy {
-        return { otype: KintoneOrderByType.Desc };
+        return { otype: KintoneOrderByType.Desc, fields: [] };
     }
     private parseLimit(): number {
-        return 0;
+        return 500;
     }
     private parseOffset(): number {
         return 0;
