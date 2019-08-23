@@ -18,8 +18,8 @@ describe('tokenize', function() {
         expect(result).toEqual(['数値_0', '>', '10']);
     });
     it('<', function() {
-        let result = new KintoneQueryTokenizer('数値_0 > 10').tokenize();
-        expect(result).toEqual(['数値_0', '>', '10']);
+        let result = new KintoneQueryTokenizer('数値_0 < 10').tokenize();
+        expect(result).toEqual(['数値_0', '<', '10']);
     });
     it('>=', function() {
         let result = new KintoneQueryTokenizer('数値_0 >= 10').tokenize();

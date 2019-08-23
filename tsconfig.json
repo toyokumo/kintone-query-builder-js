@@ -1,7 +1,8 @@
 {
     "files": [
         "src/main.ts",
-	"src/tokenizer.ts"
+	"src/tokenizer.ts",
+	"src/parser.ts",
     ],
     "compilerOptions": {
         "noImplicitAny": true,

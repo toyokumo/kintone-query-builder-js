@@ -1,10 +1,10 @@
 import { KintoneQueryTokenizer } from "./tokenizer";
 
-enum KintoneOrderByType { Desc, Asc }
+enum KintoneOrderByType { Desc = 0, Asc }
 
-interface: KintoneOrderBy {
+interface KintoneOrderBy {
     otype: KintoneOrderByType;
-    fields: Array<string>;
+    fields?: Array<string>;
 }
 
 interface KintoneParsedQuery {
@@ -14,36 +14,40 @@ interface KintoneParsedQuery {
     offset?: number;
 }
 
-class KintoneQueryParser {
+export class KintoneQueryParser {
     private tokens: Array<string>;
     private idx: number;
     public constructor(source: string) {
-	this.tokens = new KintoneQueryTokenizer(source).tokenize();
-	this.idx = 0;
+        this.tokens = new KintoneQueryTokenizer(source).tokenize();
+        this.idx = 0;
     }
-    private peek() : string {
-	return this.tokens[this.idx];
+    private peek(): string {
+        return this.tokens[this.idx];
     }
-    private poll() : string {
-	this.idx++;
-	return this.tokens[this.idx-1];
+    private poll(): string {
+        this.idx++;
+        return this.tokens[this.idx - 1];
     }
-    private isEof() : boolean {
-	return tokens.length == this.idx;
+    private isEof(): boolean {
+        return this.tokens.length == this.idx;
     }
-    private parseClause() : string {
+    private parseClause(): string {
+        return "";
     }
-    private parseOrderBy() : KintoneOrderBy {
+    private parseOrderBy(): KintoneOrderBy {
+        return { otype: KintoneOrderByType.Desc };
     }
-    private parseLimit() : number {
+    private parseLimit(): number {
+        return 0;
     }
-    private parseOffset() : number {
+    private parseOffset(): number {
+        return 0;
     }
-    public parse() : KintoneParsedQuery {
-	let clause = this.parseClause();
-	let orderBy = this.parseOrderBy();
-	let limit = this.parseLimit();
-	let offset = this.parseOffset();
-	return {clause: clause, orderBy: orderBy, limit: limit, offset: offset};
+    public parse(): KintoneParsedQuery {
+        let clause = this.parseClause();
+        let orderBy = this.parseOrderBy();
+        let limit = this.parseLimit();
+        let offset = this.parseOffset();
+        return { query: clause, orderBy: orderBy, limit: limit, offset: offset };
     }
 }
