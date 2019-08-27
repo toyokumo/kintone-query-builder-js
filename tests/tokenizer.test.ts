@@ -65,4 +65,10 @@ describe('tokenize', function() {
         let result2 = new KintoneQueryTokenizer("( (A = 1 ) or (B =     2))").tokenize();
         expect(result2).toEqual(["(", "(", "A", "=", "1", ")", "or", "(", "B", "=", "2", ")", ")"]);
     });
+    it('orderBy', function() {
+        let result1 = new KintoneQueryTokenizer("order by hoge").tokenize();
+        expect(result1).toEqual(["order", "by", "hoge"]);
+        let result2 = new KintoneQueryTokenizer("A like \"hoge\" order by A asc, B asc").tokenize();
+        expect(result2).toEqual(["A", "like", "\"hoge\"", "order", "by", "A", "asc", ",", "B", "asc"]);
+    });
 });

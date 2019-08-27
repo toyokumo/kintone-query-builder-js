@@ -4,8 +4,9 @@
   "description": "kintone query builder and parser",
   "main": "./dist/main.js",
   "scripts": {
-    "test": "jest",
-    "testWithCoverage": "jest --coverage"
+      "test": "jest",
+      "testWithCoverage": "jest --coverage",
+      "tokenizerTest": "jest tokenizer"
   },
   "keywords": [
     "kintone"

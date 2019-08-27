@@ -1,18 +1,22 @@
 import { KintoneQueryTokenizer } from "./tokenizer";
 
-enum KintoneOrderByType { Desc = 0, Asc }
+export enum KintoneOrderByType { Desc = 0, Asc }
 
 interface KintoneOrderBy {
-    otype: KintoneOrderByType;
-    fields: Array<string>;
+    field: string;
+    orderType: KintoneOrderByType;
 }
 
 interface KintoneParsedQuery {
     query: string;
-    orderBy: KintoneOrderBy;
+    orderBy: Array<KintoneOrderBy>;
     limit: number;
     offset: number;
 }
+
+const maxLimit = 500;
+const defaultLimit = maxLimit;
+const defaultOffset = 0;
 
 export class KintoneQueryParser {
     private tokens: Array<string>;
@@ -21,16 +25,26 @@ export class KintoneQueryParser {
         this.tokens = new KintoneQueryTokenizer(source).tokenize();
         this.idx = 0;
     }
+    // TODO: throw error if out of index
     private peek(): string {
         return this.tokens[this.idx];
     }
+    // TODO: throw error if out of index
     private poll(): string {
         this.idx++;
         return this.tokens[this.idx - 1];
     }
+    // TODO: throw error if out of index
+    private peek2(): string {
+        return this.tokens[this.idx + 1];
+    }
+    private canPeek2(): boolean {
+        return this.tokens.length > this.idx + 1;
+    }
     private isEof(): boolean {
         return this.tokens.length == this.idx;
     }
+    // NOTE: for debug
     private dumpParserState(): void {
         let state = "";
         for (let i = 0; i < this.tokens.length; i++) {
@@ -113,20 +127,72 @@ export class KintoneQueryParser {
             return this.parseClause() + this.parseAndOr();
         }
     }
-    private parseOrderBy(): KintoneOrderBy {
-        return { otype: KintoneOrderByType.Desc, fields: [] };
+    private stringToKintoneOrderByType(s: string): KintoneOrderByType {
+        console.assert(s === "desc" || s === "asc");
+        if (s === "desc")
+            return KintoneOrderByType.Desc;
+        return KintoneOrderByType.Asc;
+    }
+    private parseFields(): Array<KintoneOrderBy> {
+        let ret: Array<KintoneOrderBy> = [];
+        console.assert(!this.isEof());
+        let firstField = this.poll();
+        if (!this.isEof() && (this.peek() === "desc" || this.peek() === "asc")) {
+            ret.push({ field: firstField, orderType: this.stringToKintoneOrderByType(this.poll()) });
+        } else {
+            ret.push({ field: firstField, orderType: KintoneOrderByType.Desc });
+        }
+        while (this.peek() === ",") {
+            this.poll(); // skip ,
+            let field = this.poll();
+            if (!this.isEof() && (this.peek() === "desc" || this.peek() === "asc")) {
+                ret.push({ field: field, orderType: this.stringToKintoneOrderByType(this.poll()) });
+            } else {
+                ret.push({ field: field, orderType: KintoneOrderByType.Desc });
+            }
+        }
+        return ret;
+    }
+    private parseOrderBy(): Array<KintoneOrderBy> {
+        if (!this.isEof() && this.peek() === "order") {
+            console.assert(this.poll() === "order"); // skip order
+            console.assert(this.poll() === "by"); // skip by
+            return this.parseFields();
+        }
+        return [];
     }
     private parseLimit(): number {
-        return 500;
+        if (!this.isEof() && this.peek() === 'limit') {
+            console.assert(this.poll() === "limit");
+            let n = Number.parseInt(this.poll());
+            console.assert(0 <= n && n <= maxLimit);
+            return n;
+        }
+        return defaultLimit;
     }
     private parseOffset(): number {
-        return 0;
+        if (!this.isEof() && this.peek() === 'offset') {
+            console.assert(this.poll() === "offset");
+            let n = Number.parseInt(this.poll());
+            console.assert(0 <= n);
+            return n;
+        }
+        return defaultOffset;
     }
     public parse(): KintoneParsedQuery {
-        let query = this.parseQuery();
+        let query = "";
+        // TODO: refactor name queryTokens
+        const queryTokens = ["=", "!=", ">", "<", ">=", "<=", "in", "not", "like"];
+        if (!this.isEof() && this.peek() === "(") {
+            query = this.parseQuery();
+        } else if (this.canPeek2() && queryTokens.includes(this.peek2())) {
+            query = this.parseQuery();
+        }
+        // TODO: "limit 5 offset 3 orderBy hoge asc" also happens
         let orderBy = this.parseOrderBy();
         let limit = this.parseLimit();
         let offset = this.parseOffset();
+        console.assert(this.isEof());
         return { query: query, orderBy: orderBy, limit: limit, offset: offset };
     }
 }

@@ -1,7 +1,7 @@
-import { KintoneQueryParser } from "../src/parser";
+import { KintoneQueryParser, KintoneOrderByType } from "../src/parser";
 
 function generate_simple_mock(query: string) {
-    return { query: query, orderBy: { otype: 0, fields: [] }, limit: 500, offset: 0 };
+    return { query: query, orderBy: [], limit: 500, offset: 0 };
 }
 
 describe('parser', function() {
@@ -80,5 +80,24 @@ describe('parser', function() {
         expect(result2).toEqual(generate_simple_mock("((((A = 1 and D = 4) and B = 2)) or (C = 3))"));
         let result3 = new KintoneQueryParser("((A = 1 and B =             2)        ) or (C    = 3 and (D = 4 and (E = 5  and F = 6    )    ))").parse();
         expect(result3).toEqual(generate_simple_mock("((A = 1 and B = 2)) or (C = 3 and (D = 4 and (E = 5 and F = 6)))"));
+    });
+    it("orderBy", function() {
+        let result1 = new KintoneQueryParser("order by hoge").parse();
+        expect(result1).toEqual({
+            query: "",
+            orderBy: [{ field: "hoge", orderType: KintoneOrderByType.Desc }],
+            limit: 500,
+            offset: 0
+        });
+        let result2 = new KintoneQueryParser("A like \"hoge\" order by A asc, B asc").parse();
+        expect(result2).toEqual({
+            query: "A like \"hoge\"",
+            orderBy: [
+                { field: "A", orderType: KintoneOrderByType.Asc },
+                { field: "B", orderType: KintoneOrderByType.Asc }
+            ],
+            limit: 500,
+            offset: 0
+        });
     });
 });
