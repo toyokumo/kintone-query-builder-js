@@ -59,4 +59,10 @@ describe('tokenize', function() {
         let result = new KintoneQueryTokenizer('数値_0 >= 10 and 数値_0 <= 20').tokenize();
         expect(result).toEqual(['数値_0', '>=', '10', 'and', '数値_0', '<=', '20']);
     });
+    it('paren', function() {
+        let result1 = new KintoneQueryTokenizer("( A = 1 or B = 2)").tokenize();
+        expect(result1).toEqual(["(", "A", "=", "1", "or", "B", "=", "2", ")"]);
+        let result2 = new KintoneQueryTokenizer("( (A = 1 ) or (B =     2))").tokenize();
+        expect(result2).toEqual(["(", "(", "A", "=", "1", ")", "or", "(", "B", "=", "2", ")", ")"]);
+    });
 });

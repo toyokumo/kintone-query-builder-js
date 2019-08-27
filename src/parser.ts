@@ -31,6 +31,18 @@ export class KintoneQueryParser {
     private isEof(): boolean {
         return this.tokens.length == this.idx;
     }
+    private dumpParserState(): void {
+        let state = "";
+        for (let i = 0; i < this.tokens.length; i++) {
+            state += this.tokens[i];
+            if (i == this.idx) {
+                state += "@";
+            } else {
+                state += ",";
+            }
+        }
+        console.log(state);
+    }
     private parseValue(): string {
         return this.poll();
     }
@@ -59,6 +71,11 @@ export class KintoneQueryParser {
     }
     // TODO: handle error
     private parseClause(): string {
+        let hasParen = false;
+        if (this.peek() === "(") {
+            this.poll();
+            hasParen = true;
+        }
         let lhs = this.poll();
         let op: string = "";
         if (this.peek() === "not") {
@@ -67,17 +84,34 @@ export class KintoneQueryParser {
             op += this.poll();
         }
         let rhs = this.parseRhs();
-        return lhs + " " + op + " " + rhs;
+        let ret = lhs + " " + op + " " + rhs;
+        if (hasParen) {
+            console.assert(this.peek() === ")", "expected: ) ,but got %s", this.peek());
+            this.poll(); // skip )
+            return "(" + ret + ")";
+        }
+        return ret;
+    }
+    private parseAndOr(): string {
+        let ret = "";
+        while (!this.isEof() && (this.peek() === "and" || this.peek() === "or")) {
+            ret += " ";
+            ret += this.poll();
+            ret += " ";
+            ret += this.parseQuery();
+        }
+        return ret;
     }
     private parseQuery(): string {
-        let query = this.parseClause();
-        while (this.peek() === "and" || this.peek() === "or") {
-            query += " ";
-            query += this.poll();
-            query += " ";
-            query += this.parseClause();
+        if (this.peek() === "(") {
+            this.poll(); // skip (
+            let query = this.parseQuery();
+            query += this.parseAndOr();
+            this.poll(); // skip )
+            return "(" + query + ")" + this.parseAndOr();
+        } else {
+            return this.parseClause() + this.parseAndOr();
         }
-        return query;
     }
     private parseOrderBy(): KintoneOrderBy {
         return { otype: KintoneOrderByType.Desc, fields: [] };

@@ -63,4 +63,22 @@ describe('parser', function() {
         let result = new KintoneQueryParser('数値_0 >= 10 and 数値_0 <= 20').parse();
         expect(result).toEqual(generate_simple_mock('数値_0 >= 10 and 数値_0 <= 20'));
     });
+    it('paren', function() {
+        let result1 = new KintoneQueryParser("( A = 1 or B = 2)").parse();
+        expect(result1).toEqual(generate_simple_mock("(A = 1 or B = 2)"));
+        let result2 = new KintoneQueryParser("( (A = 1 ) or (B =     2))").parse();
+        expect(result2).toEqual(generate_simple_mock("((A = 1) or (B = 2))"));
+        let result3 = new KintoneQueryParser("A = 1 and B = 2").parse();
+        expect(result3).toEqual(generate_simple_mock("A = 1 and B = 2"));
+        let result4 = new KintoneQueryParser("A = 1 and (B = 2 and C = 3)").parse();
+        expect(result4).toEqual(generate_simple_mock("A = 1 and (B = 2 and C = 3)"));
+    });
+    it('nested', function() {
+        let result1 = new KintoneQueryParser("(((A = 1        and        B = 2)      ) or (   C = 3))").parse();
+        expect(result1).toEqual(generate_simple_mock("(((A = 1 and B = 2)) or (C = 3))"));
+        let result2 = new KintoneQueryParser("((((A = 1  and D = 4)       and        B = 2)      ) or (   C = 3))").parse();
+        expect(result2).toEqual(generate_simple_mock("((((A = 1 and D = 4) and B = 2)) or (C = 3))"));
+        let result3 = new KintoneQueryParser("((A = 1 and B =             2)        ) or (C    = 3 and (D = 4 and (E = 5  and F = 6    )    ))").parse();
+        expect(result3).toEqual(generate_simple_mock("((A = 1 and B = 2)) or (C = 3 and (D = 4 and (E = 5 and F = 6)))"));
+    });
 });
