@@ -81,7 +81,7 @@ describe('parser', function() {
         let result3 = new KintoneQueryParser("((A = 1 and B =             2)        ) or (C    = 3 and (D = 4 and (E = 5  and F = 6    )    ))").parse();
         expect(result3).toEqual(generate_simple_mock("((A = 1 and B = 2)) or (C = 3 and (D = 4 and (E = 5 and F = 6)))"));
     });
-    it("orderBy", function() {
+    it("order by", function() {
         let result1 = new KintoneQueryParser("order by hoge").parse();
         expect(result1).toEqual({
             query: "",
@@ -98,6 +98,57 @@ describe('parser', function() {
             ],
             limit: 500,
             offset: 0
+        });
+        let result3 = new KintoneQueryParser("A like \"hoge\" order by A, B asc, C").parse();
+        expect(result3).toEqual({
+            query: "A like \"hoge\"",
+            orderBy: [
+                { field: "A", orderType: KintoneOrderByType.Desc },
+                { field: "B", orderType: KintoneOrderByType.Asc },
+                { field: "C", orderType: KintoneOrderByType.Desc },
+            ],
+            limit: 500,
+            offset: 0
+        });
+    });
+    it("limit", function() {
+        let result = new KintoneQueryParser("数値 >= 10 limit 100").parse();
+        expect(result).toEqual({
+            query: "数値 >= 10",
+            orderBy: [],
+            limit: 100,
+            offset: 0
+        });
+    });
+    it("offset", function() {
+        let result = new KintoneQueryParser("数値 >= 10 offset 100").parse();
+        expect(result).toEqual({
+            query: "数値 >= 10",
+            orderBy: [],
+            limit: 500,
+            offset: 100
+        });
+    });
+    it("offset", function() {
+        let result1 = new KintoneQueryParser("A = 1 and B <= 100 order by A asc, B desc limit 500 offset 1000").parse();
+        expect(result1).toEqual({
+            query: "A = 1 and B <= 100",
+            orderBy: [
+                { field: "A", orderType: KintoneOrderByType.Asc },
+                { field: "B", orderType: KintoneOrderByType.Desc }
+            ],
+            limit: 500,
+            offset: 1000
+        });
+        let result2 = new KintoneQueryParser("(A = 1 or B <= 100) and (C = 100 and D >= 1) order by A, B asc limit 500 offset 1000").parse();
+        expect(result2).toEqual({
+            query: "(A = 1 or B <= 100) and (C = 100 and D >= 1)",
+            orderBy: [
+                { field: "A", orderType: KintoneOrderByType.Desc },
+                { field: "B", orderType: KintoneOrderByType.Asc }
+            ],
+            limit: 500,
+            offset: 1000
         });
     });
 });
