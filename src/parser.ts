@@ -46,6 +46,12 @@ export class KintoneQueryParser {
         }
         return this.tokens[this.idx].token;
     }
+    private getLineNumberOfFirstToken(): number {
+        return this.tokens[this.idx].lineNumber;
+    }
+    private getColumnNumberOfFirstToken(): number {
+        return this.tokens[this.idx].columnNumber;
+    }
     // TODO: throw error if out of index
     private poll(): string {
         if (this.isEof()) {
@@ -56,6 +62,8 @@ export class KintoneQueryParser {
     }
     // TODO: throw error if out of index
     private peek2(): string {
+        if (this.idx + 1 >= this.tokens.length)
+            throw new KintoneQueryParseError("unexpected the end of tokens");
         return this.tokens[this.idx + 1].token;
     }
     private canPeek2(): boolean {
@@ -88,8 +96,14 @@ export class KintoneQueryParser {
         ret += this.parseValue(); // TODO: this.poll() maybe?
         while (this.peek() !== ")") {
             if (this.isEof()) {
-                break; // TODO: error case.
+                throw new KintoneQueryParseError("unexpected the end of tokens. maybe unbalanced parentheses.");
             }
+            if (this.peek() !== ",")
+                throw new KintoneQueryParseError(
+                    `expected ',', but got ${this.peek()}`,
+                    this.getLineNumberOfFirstToken(),
+                    this.getColumnNumberOfFirstToken()
+                );
             ret += this.poll(); // ,
             ret += " ";
             ret += this.parseValue();
@@ -113,15 +127,31 @@ export class KintoneQueryParser {
         }
         let lhs = this.poll();
         let op: string = "";
+        let opLineNumber = this.getLineNumberOfFirstToken();
+        let opColumnNumber = this.getColumnNumberOfFirstToken();
         if (this.peek() === "not") {
             op += this.poll() + " " + this.poll();
         } else {
             op += this.poll();
         }
+        const allowed: Array<string> = ["=", "!=", ">", "<", ">=", "<=", "in", "not in", "like", "not like"];
+        if (!allowed.includes(op)) {
+            throw new KintoneQueryParseError(
+                `expected '=' or '!=' or '>' or '<' or '>=' or '<=' or 'in' or 'not in' or 'like' or 'not like', but got ${op}`,
+                opLineNumber,
+                opColumnNumber
+            );
+        }
         let rhs = this.parseRhs();
         let ret = lhs + " " + op + " " + rhs;
         if (hasParen) {
-            console.assert(this.peek() === ")", "expected: ) ,but got %s", this.peek());
+            if (this.peek() !== ")") {
+                throw new KintoneQueryParseError(
+                    `expected ')', but got ${this.peek()}`,
+                    this.getLineNumberOfFirstToken(),
+                    this.getColumnNumberOfFirstToken()
+                );
+            }
             this.poll(); // skip )
             return "(" + ret + ")";
         }
@@ -149,14 +179,15 @@ export class KintoneQueryParser {
         }
     }
     private stringToKintoneOrderByType(s: string): KintoneOrderByType {
-        console.assert(s === "desc" || s === "asc");
         if (s === "desc")
             return KintoneOrderByType.Desc;
         return KintoneOrderByType.Asc;
     }
     private parseFields(): Array<KintoneOrderBy> {
         let ret: Array<KintoneOrderBy> = [];
-        console.assert(!this.isEof());
+        if (this.isEof()) {
+            throw new KintoneQueryParseError("unexpected the end of tokens");
+        }
         let firstField = this.poll();
         if (!this.isEof() && (this.peek() === "desc" || this.peek() === "asc")) {
             ret.push({ field: firstField, orderType: this.stringToKintoneOrderByType(this.poll()) });
@@ -176,27 +207,51 @@ export class KintoneQueryParser {
     }
     private parseOrderBy(): Array<KintoneOrderBy> {
         if (!this.isEof() && this.peek() === "order") {
-            console.assert(this.poll() === "order"); // skip order
-            console.assert(this.poll() === "by"); // skip by
+            this.poll(); // skip 'order'
+            if (this.peek() !== "by") {
+                throw new KintoneQueryParseError(
+                    `expected 'by', but got ${this.peek()}`,
+                    this.getLineNumberOfFirstToken(),
+                    this.getColumnNumberOfFirstToken()
+                );
+            }
+            this.poll(); // skip by
             return this.parseFields();
         }
         return [];
     }
     private parseLimit(): number {
         if (!this.isEof() && this.peek() === 'limit') {
-            console.assert(this.poll() === "limit");
-            let n = parseInt(this.poll());
-            console.assert(0 <= n && n <= maxLimit);
-            return n;
+            this.poll(); // skip 'limit'
+            let numString = this.peek();
+            let num = parseInt(numString);
+            if (!(0 <= num && num <= maxLimit)) {
+                throw new KintoneQueryParseError(
+                    `expected ')', but got ${numString}`,
+                    this.getLineNumberOfFirstToken(),
+                    this.getColumnNumberOfFirstToken()
+                )
+            }
+            this.poll(); // skip numString
+            return num;
         }
         return defaultLimit;
     }
     private parseOffset(): number {
         if (!this.isEof() && this.peek() === 'offset') {
-            console.assert(this.poll() === "offset");
-            let n = parseInt(this.poll());
-            console.assert(0 <= n);
-            return n;
+            this.poll(); // skip 'offset'
+            // TODO: treat float case ??? (maybe not)
+            let numString = this.peek();
+            let num = parseInt(numString);
+            if (!(0 <= num)) {
+                throw new KintoneQueryParseError(
+                    `expected ')', but got ${numString}`,
+                    this.getLineNumberOfFirstToken(),
+                    this.getColumnNumberOfFirstToken()
+                )
+            }
+            this.poll(); // skip numString
+            return num;
         }
         return defaultOffset;
     }
@@ -213,7 +268,13 @@ export class KintoneQueryParser {
         let orderBy = this.parseOrderBy();
         let limit = this.parseLimit();
         let offset = this.parseOffset();
-        console.assert(this.isEof());
+        if (!this.isEof()) {
+            throw new KintoneQueryParseError(
+                `expected end of the tokens, but got ${this.peek()}`,
+                this.getLineNumberOfFirstToken(),
+                this.getColumnNumberOfFirstToken()
+            );
+        }
         return { query: query, orderBy: orderBy, limit: limit, offset: offset };
     }
 }
