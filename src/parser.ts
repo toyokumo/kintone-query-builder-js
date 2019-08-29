@@ -1,4 +1,4 @@
-import { KintoneQueryTokenizer } from "./tokenizer";
+import { KintoneQueryTokenizer, KintoneQueryToken } from "./tokenizer";
 
 export enum KintoneOrderByType { Desc = 0, Asc }
 
@@ -19,7 +19,7 @@ const defaultLimit = maxLimit;
 const defaultOffset = 0;
 
 export class KintoneQueryParser {
-    private tokens: Array<string>;
+    private tokens: Array<KintoneQueryToken>;
     private idx: number;
     public constructor(source: string) {
         this.tokens = new KintoneQueryTokenizer(source).tokenize();
@@ -27,16 +27,16 @@ export class KintoneQueryParser {
     }
     // TODO: throw error if out of index
     private peek(): string {
-        return this.tokens[this.idx];
+        return this.tokens[this.idx].token;
     }
     // TODO: throw error if out of index
     private poll(): string {
         this.idx++;
-        return this.tokens[this.idx - 1];
+        return this.tokens[this.idx - 1].token;
     }
     // TODO: throw error if out of index
     private peek2(): string {
-        return this.tokens[this.idx + 1];
+        return this.tokens[this.idx + 1].token;
     }
     private canPeek2(): boolean {
         return this.tokens.length > this.idx + 1;
@@ -48,7 +48,7 @@ export class KintoneQueryParser {
     private dumpParserState(): void {
         let state = "";
         for (let i = 0; i < this.tokens.length; i++) {
-            state += this.tokens[i];
+            state += this.tokens[i].token;
             if (i == this.idx) {
                 state += "@";
             } else {
@@ -56,6 +56,7 @@ export class KintoneQueryParser {
             }
         }
         console.log(state);
+        console.log("thid.idx = " + this.idx);
     }
     private parseValue(): string {
         return this.poll();
@@ -142,7 +143,7 @@ export class KintoneQueryParser {
         } else {
             ret.push({ field: firstField, orderType: KintoneOrderByType.Desc });
         }
-        while (this.peek() === ",") {
+        while (!this.isEof() && this.peek() === ",") {
             this.poll(); // skip ,
             let field = this.poll();
             if (!this.isEof() && (this.peek() === "desc" || this.peek() === "asc")) {
@@ -164,7 +165,7 @@ export class KintoneQueryParser {
     private parseLimit(): number {
         if (!this.isEof() && this.peek() === 'limit') {
             console.assert(this.poll() === "limit");
-            let n = Number.parseInt(this.poll());
+            let n = parseInt(this.poll());
             console.assert(0 <= n && n <= maxLimit);
             return n;
         }
@@ -173,7 +174,7 @@ export class KintoneQueryParser {
     private parseOffset(): number {
         if (!this.isEof() && this.peek() === 'offset') {
             console.assert(this.poll() === "offset");
-            let n = Number.parseInt(this.poll());
+            let n = parseInt(this.poll());
             console.assert(0 <= n);
             return n;
         }
@@ -182,7 +183,7 @@ export class KintoneQueryParser {
     public parse(): KintoneParsedQuery {
         let query = "";
         // TODO: refactor name queryTokens
-        const queryTokens = ["=", "!=", ">", "<", ">=", "<=", "in", "not", "like"];
+        const queryTokens: Array<string> = ["=", "!=", ">", "<", ">=", "<=", "in", "not", "like"];
         if (!this.isEof() && this.peek() === "(") {
             query = this.parseQuery();
         } else if (this.canPeek2() && queryTokens.includes(this.peek2())) {
