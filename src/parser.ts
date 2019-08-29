@@ -18,6 +18,21 @@ const maxLimit = 500;
 const defaultLimit = maxLimit;
 const defaultOffset = 0;
 
+export class KintoneQueryParseError extends Error {
+    name: string;
+    message: string;
+    lineNumber: number;
+    columnNumber: number;
+    constructor(message: string, lineNumber: number = -1, columnNumber: number = -1) {
+        // lineNumber = -1 and columnNumber = -1 if no more token error
+        super(); // TODO: super(message); ??? but it produces an warning
+        this.message = message;
+        this.name = "KintoneQueryParseError";
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
+    }
+}
+
 export class KintoneQueryParser {
     private tokens: Array<KintoneQueryToken>;
     private idx: number;
@@ -25,12 +40,17 @@ export class KintoneQueryParser {
         this.tokens = new KintoneQueryTokenizer(source).tokenize();
         this.idx = 0;
     }
-    // TODO: throw error if out of index
     private peek(): string {
+        if (this.isEof()) {
+            throw new KintoneQueryParseError("unexpected the end of tokens");
+        }
         return this.tokens[this.idx].token;
     }
     // TODO: throw error if out of index
     private poll(): string {
+        if (this.isEof()) {
+            throw new KintoneQueryParseError("unexpected the end of tokens");
+        }
         this.idx++;
         return this.tokens[this.idx - 1].token;
     }
