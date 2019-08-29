@@ -1,19 +1,41 @@
+export interface KintoneQueryToken {
+    token: string;
+    lineNumber: number;
+    columnNumber: number;
+}
+
+function makeKintoneQueryToken(token: string, lineNumber: number, columnNumber: number): KintoneQueryToken {
+    return { token: token, lineNumber: lineNumber, columnNumber: columnNumber };
+}
+
 export class KintoneQueryTokenizer {
     private buffer: string;
     private idx: number;
+    private lineNumber: number;
+    private columnNumber: number;
     public constructor(source: string) {
         this.buffer = source;
         this.idx = 0;
+        this.lineNumber = 1;
+        this.columnNumber = 0;
     }
     private peek(): string {
         return this.buffer[this.idx];
     }
     private poll(): string {
+        if (this.isNewline(this.buffer[this.idx])) {
+            this.lineNumber++;
+            this.columnNumber = 0;
+        } else
+            this.columnNumber++;
         this.idx++;
         return this.buffer[this.idx - 1];
     }
     private isSpace(ch: string): boolean { // TODO: should skip '\t', '\r', '\n', etc... ???
-        return ch === ' ';
+        return ch === ' ' || ch === '\t' || ch === '\r' || ch == '\n';
+    }
+    private isNewline(ch: string): boolean {
+        return ch === '\n';
     }
     private skipSpaces(): void {
         while (!this.isEof() && this.isSpace(this.peek())) {
@@ -34,6 +56,8 @@ export class KintoneQueryTokenizer {
                 state += ",";
             }
         }
+        console.log("lineNumber=" + this.lineNumber);
+        console.log("columnNumber=" + this.columnNumber);
         console.log(state);
     }
     private isDigit(ch: string): boolean {
@@ -56,31 +80,34 @@ export class KintoneQueryTokenizer {
         }
         return acc;
     }
-    private getToken(): string {
+    private getToken(): KintoneQueryToken {
         console.assert(!this.isSpace(this.buffer[this.idx]));
+        let ln = this.lineNumber;
+        let cn = this.columnNumber;
         if (this.peek() === '\"') { // string case. TODO: what about '\'' ???
-            return this.getStringToken();
+            return makeKintoneQueryToken(this.getStringToken(), ln, cn);
         }
         if (this.isDigit(this.peek())) { // number: TODO: negative number, floating point number(maybe)
-            return this.getNumberToken();
+            return makeKintoneQueryToken(this.getNumberToken(), ln, cn);
         }
         if (this.peek() === '(') { // left paren
-            return this.poll();
+            return makeKintoneQueryToken(this.poll(), ln, cn);
         }
         if (this.peek() === ')') { // right paren
-            return this.poll();
+            return makeKintoneQueryToken(this.poll(), ln, cn);
         }
         if (this.peek() === ',') { // comma
-            return this.poll();
+            return makeKintoneQueryToken(this.poll(), ln, cn);
         }
+        // identifier
         let acc = "";
         while (!this.isEof() && !this.isSpace(this.peek()) && this.peek() !== ",") {
             acc += this.poll();
         }
-        return acc;
+        return makeKintoneQueryToken(acc, ln, cn);
     }
-    public tokenize(): Array<string> {
-        let ret: Array<string> = [];
+    public tokenize(): Array<KintoneQueryToken> {
+        let ret: Array<KintoneQueryToken> = [];
         while (!this.isEof()) {
             this.skipSpaces();
             if (this.isEof())

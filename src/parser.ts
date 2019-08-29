@@ -188,7 +188,7 @@ export class KintoneQueryParser {
         } else if (this.canPeek2() && queryTokens.includes(this.peek2())) {
             query = this.parseQuery();
         }
-        // TODO: "limit 5 offset 3 orderBy hoge asc" also happens
+        // TODO: "limit 5 offset 3 orderBy hoge asc" also happens (order)
         let orderBy = this.parseOrderBy();
         let limit = this.parseLimit();
         let offset = this.parseOffset();
