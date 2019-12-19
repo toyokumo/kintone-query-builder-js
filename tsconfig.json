@@ -1,14 +1,12 @@
 {
-    "files": [
-        "src/main.ts",
-	"src/tokenizer.ts",
-	"src/parser.ts",
-    ],
-    "compilerOptions": {
-        "noImplicitAny": true,
-        "target": "es2016",
-	"esModuleInterop": true,
-	"strict": true,
-	"module": "commonjs"
-    }
+  "files": [
+    "src/*.ts"
+  ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "target": "es2016",
+    "esModuleInterop": true,
+    "strict": true,
+    "module": "commonjs"
+  }
 }
