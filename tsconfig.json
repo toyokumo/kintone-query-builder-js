@@ -6,6 +6,8 @@
     "src/kintone-query-builder.ts",
     "src/kintone-query-error.ts",
     "src/kintone-query-expr.ts",
+    "src/kintone-query-parser.ts",
+    "src/parser/*",
     "src/main.ts",
     "src/parser.ts",
     "src/tokenizer.ts"
