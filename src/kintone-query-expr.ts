@@ -104,27 +104,36 @@ export default class KintoneQueryExpr {
         return this;
     }
 
+    public where(varOrExpr: KintoneQueryExpr): this;
+    public where(varOrExpr: string, operator: string, val: string | number | (string | number)[]): this;
     public where(varOrExpr: string | KintoneQueryExpr,
-                 operator: string = '',
-                 val: string | number | (string | number)[] = []): this {
-        return this.andWhere(varOrExpr, operator, val);
+                 operator?: string,
+                 val?: string | number | (string | number)[]): this {
+        if (varOrExpr instanceof KintoneQueryExpr) {
+            return this.andWhere(varOrExpr);
+        }
+        return this.andWhere(varOrExpr, operator!, val!);
     }
 
+    public andWhere(varOrExpr: KintoneQueryExpr): this;
+    public andWhere(varOrExpr: string, operator: string, val: string | number | (string | number)[]): this;
     public andWhere(varOrExpr: string | KintoneQueryExpr,
-                    operator: string = '',
-                    val: string | number | (string | number)[] = []): this {
+                    operator?: string,
+                    val?: string | number | (string | number)[]): this {
         if (varOrExpr instanceof KintoneQueryExpr) {
             return this.whereWithExpr(varOrExpr, 'and');
         }
-        return this.whereWithVarOpVal(varOrExpr, operator, val, 'and');
+        return this.whereWithVarOpVal(varOrExpr, operator!, val!, 'and');
     }
 
+    public orWhere(varOrExpr: KintoneQueryExpr): this;
+    public orWhere(varOrExpr: string, operator: string, val: string | number | (string | number)[]): this;
     public orWhere(varOrExpr: string | KintoneQueryExpr,
-                   operator: string = '',
-                   val: string | number | (string | number)[] = []): this {
+                   operator?: string,
+                   val?: string | number | (string | number)[]): this {
         if (varOrExpr instanceof KintoneQueryExpr) {
             return this.whereWithExpr(varOrExpr, 'or');
         }
-        return this.whereWithVarOpVal(varOrExpr, operator, val, 'or');
+        return this.whereWithVarOpVal(varOrExpr, operator!, val!, 'or');
     }
 }

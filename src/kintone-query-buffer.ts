@@ -30,7 +30,7 @@ export default class KintoneQueryBuffer implements KintoneQueryBufferInterface {
         return this.buffer.length === 0;
     }
 
-    public toQuery(hasParen: Boolean = false): string {
+    public toQuery(hasParent: Boolean = false): string {
         let query = '';
 
         for (let i = 0; i < this.buffer.length; i++) {
@@ -47,7 +47,7 @@ export default class KintoneQueryBuffer implements KintoneQueryBufferInterface {
         if (query === '') {
             return '';
         }
-        if (hasParen) {
+        if (hasParent) {
             return `(${query})`;
         }
         return query;
