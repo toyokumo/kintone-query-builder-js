@@ -91,32 +91,28 @@ describe("Query test", () => {
         expect(query).toEqual('order by $id desc,name asc,age desc');
     });
 
-    it('testFunctionQuery', () => {
-        const tests = [
-            ['user', '=', 'LOGINUSER()', 'user = LOGINUSER()'],
-            ['org', '=', 'PRIMARY_ORGANIZATION()', 'org = PRIMARY_ORGANIZATION()'],
-            ['time', '=', 'NOW()', 'time = NOW()'],
-            ['time', '=', 'TODAY()', 'time = TODAY()'],
-            ['time', '<', 'FROM_TODAY(5,DAYS)', 'time < FROM_TODAY(5,DAYS)'],
-            ['time', '=', 'THIS_WEEK(SUNDAY)', 'time = THIS_WEEK(SUNDAY)'],
-            ['time', '=', 'THIS_WEEK()', 'time = THIS_WEEK()'],
-            ['time', '=', 'LAST_WEEK(SUNDAY)', 'time = LAST_WEEK(SUNDAY)'],
-            ['time', '=', 'LAST_WEEK()', 'time = LAST_WEEK()'],
-            ['time', '=', 'THIS_MONTH()', 'time = THIS_MONTH()'],
-            ['time', '=', 'THIS_MONTH(LAST)', 'time = THIS_MONTH(LAST)'],
-            ['time', '=', 'THIS_MONTH(1)', 'time = THIS_MONTH(1)'],
-            ['time', '=', 'THIS_MONTH(81)', 'time = "THIS_MONTH(81)"'],
-            ['time', '=', 'LAST_MONTH()', 'time = LAST_MONTH()'],
-            ['time', '=', 'LAST_MONTH(LAST)', 'time = LAST_MONTH(LAST)'],
-            ['time', '=', 'LAST_MONTH(1)', 'time = LAST_MONTH(1)'],
-            ['time', '=', 'LAST_MONTH(81)', 'time = "LAST_MONTH(81)"'],
-            ['time', '=', 'THIS_YEAR()', 'time = THIS_YEAR()']
-        ];
-
-        for (const test of tests) {
-            const query = new KintoneQueryBuilder().where(test[0], test[1], test[2]).build();
-            expect(query).toEqual(test[3]);
-        }
+    it.each([
+        ['user', '=', 'LOGINUSER()', 'user = LOGINUSER()'],
+        ['org', '=', 'PRIMARY_ORGANIZATION()', 'org = PRIMARY_ORGANIZATION()'],
+        ['time', '=', 'NOW()', 'time = NOW()'],
+        ['time', '=', 'TODAY()', 'time = TODAY()'],
+        ['time', '<', 'FROM_TODAY(5,DAYS)', 'time < FROM_TODAY(5,DAYS)'],
+        ['time', '=', 'THIS_WEEK(SUNDAY)', 'time = THIS_WEEK(SUNDAY)'],
+        ['time', '=', 'THIS_WEEK()', 'time = THIS_WEEK()'],
+        ['time', '=', 'LAST_WEEK(SUNDAY)', 'time = LAST_WEEK(SUNDAY)'],
+        ['time', '=', 'LAST_WEEK()', 'time = LAST_WEEK()'],
+        ['time', '=', 'THIS_MONTH()', 'time = THIS_MONTH()'],
+        ['time', '=', 'THIS_MONTH(LAST)', 'time = THIS_MONTH(LAST)'],
+        ['time', '=', 'THIS_MONTH(1)', 'time = THIS_MONTH(1)'],
+        ['time', '=', 'THIS_MONTH(81)', 'time = "THIS_MONTH(81)"'],
+        ['time', '=', 'LAST_MONTH()', 'time = LAST_MONTH()'],
+        ['time', '=', 'LAST_MONTH(LAST)', 'time = LAST_MONTH(LAST)'],
+        ['time', '=', 'LAST_MONTH(1)', 'time = LAST_MONTH(1)'],
+        ['time', '=', 'LAST_MONTH(81)', 'time = "LAST_MONTH(81)"'],
+        ['time', '=', 'THIS_YEAR()', 'time = THIS_YEAR()']
+    ])('testFunctionQuery', (a, b, c, expected) => {
+        const query = new KintoneQueryBuilder().where(a, b, c).build();
+        expect(query).toEqual(expected);
     });
 
     it('testComplicatedWhere', () => {
