@@ -47,7 +47,7 @@ export default class KintoneQueryBuffer implements KintoneQueryBufferInterface {
         if (query === '') {
             return '';
         }
-        if (hasParent) {
+        if (hasParent && this.buffer.length > 1) {
             return `(${query})`;
         }
         return query;

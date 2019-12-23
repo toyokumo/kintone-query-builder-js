@@ -177,7 +177,7 @@ describe("Query test", () => {
         const query6 = new KintoneQueryBuilder()
             .where(new KintoneQueryExpr().where('x', '<', 1))
             .build();
-        expect(query6).toEqual('(x < 1)');
+        expect(query6).toEqual('x < 1');
 
         const query7 = new KintoneQueryBuilder()
             .where(new KintoneQueryExpr())
@@ -220,13 +220,13 @@ describe("Query test", () => {
             .where(new KintoneQueryExpr())
             .where(new KintoneQueryExpr().where('x', '<', 10))
             .build();
-        expect(query10).toEqual('(x < 10)');
+        expect(query10).toEqual('x < 10');
 
         const query11 = new KintoneQueryBuilder()
             .where(new KintoneQueryExpr())
             .andWhere(new KintoneQueryExpr().where('x', '<', 10))
             .build();
-        expect(query11).toEqual('(x < 10)');
+        expect(query11).toEqual('x < 10');
     });
 
     it('testEscape', () => {
