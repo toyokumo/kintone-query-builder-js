@@ -100,16 +100,16 @@ describe("order-by test", () => {
     it.each([
         ['order by field asc', 'order by field asc'],
         ['order by フィールド desc', 'order by フィールド desc'],
-        ['order by f__1', 'order by f__1 '],
+        ['order by f__1', 'order by f__1'],
         ['  order by    field     asc ', 'order by field asc'],
     ])("monadic order-by case", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 
     it.each([
-        ['order by field asc, f2, $id desc', 'order by field asc,f2 ,$id desc'],
-        ['order by f1,f2,f3', 'order by f1 ,f2 ,f3 '],
-        ['  order by  field   asc ,  f2  ,  $id   desc ', 'order by field asc,f2 ,$id desc'],
+        ['order by field asc, f2, $id desc', 'order by field asc,f2,$id desc'],
+        ['order by f1,f2,f3', 'order by f1,f2,f3'],
+        ['  order by  field   asc ,  f2  ,  $id   desc ', 'order by field asc,f2,$id desc'],
     ])("multi order-by case", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
@@ -141,9 +141,9 @@ describe("complex query test", () => {
     it.each([
         ['order by field asc limit 1', 'order by field asc limit 1'],
         ['order by field desc offset 500', 'order by field desc offset 500'],
-        ['order by field asc,f2 desc,f3 limit 1 offset 500', 'order by field asc,f2 desc,f3  limit 1 offset 500'],
+        ['order by field asc,f2 desc,f3 limit 1 offset 500', 'order by field asc,f2 desc,f3 limit 1 offset 500'],
         ['limit 1 offset 500', 'limit 1 offset 500'],
-        [' order by  field   limit 1  offset  0 ', 'order by field  limit 1 offset 0'],
+        [' order by  field   limit 1  offset  0 ', 'order by field limit 1 offset 0'],
     ])("no condition case", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
@@ -152,7 +152,7 @@ describe("complex query test", () => {
         ['field=1 order by field asc limit 1', 'field = 1 order by field asc limit 1'],
         ['(f1=1 or f2=2) and f3=3 order by field asc limit 1', '((f1 = 1 or f2 = 2) and f3 = 3) order by field asc limit 1'],
         ['((f1=1 or f2=2) and f3=3) or (f4=4 and f5=5) order by field asc,f2 desc,f3 limit 1 offset 500',
-            '(((f1 = 1 or f2 = 2) and f3 = 3) or (f4 = 4 and f5 = 5)) order by field asc,f2 desc,f3  limit 1 offset 500'],
+            '(((f1 = 1 or f2 = 2) and f3 = 3) or (f4 = 4 and f5 = 5)) order by field asc,f2 desc,f3 limit 1 offset 500'],
     ])("with condition case", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });

@@ -10,11 +10,15 @@ export default class KintoneQueryBuilder extends KintoneQueryExpr {
     private limitClause: string = '';
     private offsetClause: string = '';
 
-    public orderBy(variable: string, order: string): this {
+    public orderBy(variable: string, order?: string): this {
         if (this.orderClause === '') {
-            this.orderClause = `order by ${variable} ${order}`;
+            this.orderClause = `order by ${variable}`;
         } else {
-            this.orderClause += `,${variable} ${order}`;
+            this.orderClause += `,${variable}`;
+        }
+
+        if (order) {
+            this.orderClause += ` ${order}`;
         }
         return this;
     }

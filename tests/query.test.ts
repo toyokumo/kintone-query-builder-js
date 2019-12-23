@@ -9,9 +9,11 @@ describe("Query test", () => {
     });
 
     it("testOrderBy", () => {
-        const builder = new KintoneQueryBuilder();
-        const query = builder.orderBy('id', 'asc').build();
-        expect(query).toEqual('order by id asc');
+        const query0 = new KintoneQueryBuilder().orderBy('id', 'asc').build();
+        expect(query0).toEqual('order by id asc');
+
+        const query1 = new KintoneQueryBuilder().orderBy('id').build();
+        expect(query1).toEqual('order by id');
     });
 
     it('testLimit', () => {
