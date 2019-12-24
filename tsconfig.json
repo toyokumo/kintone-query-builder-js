@@ -1,14 +1,20 @@
 {
-    "files": [
-        "src/main.ts",
-	"src/tokenizer.ts",
-	"src/parser.ts",
-    ],
-    "compilerOptions": {
-        "noImplicitAny": true,
-        "target": "es2016",
-	"esModuleInterop": true,
-	"strict": true,
-	"module": "commonjs"
-    }
+  "files": [
+    "src/kintone-query-buffer-element.ts",
+    "src/kintone-query-buffer-interface.ts",
+    "src/kintone-query-buffer.ts",
+    "src/kintone-query-builder.ts",
+    "src/kintone-query-error.ts",
+    "src/kintone-query-expr.ts",
+    "src/main.ts",
+    "src/parser.ts",
+    "src/tokenizer.ts"
+  ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "target": "es2016",
+    "esModuleInterop": true,
+    "strict": true,
+    "module": "commonjs"
+  }
 }
