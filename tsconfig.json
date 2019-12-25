@@ -12,9 +12,6 @@
     "src/parser/offset-parser.ts",
     "src/parser/order-by-parser.ts",
     "src/parser/parser-interface.ts",
-    "src/main.ts",
-    "src/parser.ts",
-    "src/tokenizer.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,
