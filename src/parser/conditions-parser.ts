@@ -2,7 +2,7 @@ import ParserInterface from "./parser-interface";
 import KintoneQueryBuilder from "../kintone-query-builder";
 import {IToken} from "ebnf";
 import KintoneQueryExpr, {Operator} from "../kintone-query-expr";
-import {KintoneQueryError} from "../kintone-query-error";
+import KintoneQueryError from "../kintone-query-error";
 
 export default class ConditionsParser implements ParserInterface {
     apply(builder: KintoneQueryBuilder, token: IToken): void {

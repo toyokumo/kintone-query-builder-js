@@ -1,5 +1,5 @@
 import KintoneQueryBuffer from "./kintone-query-buffer";
-import {KintoneQueryError} from "./kintone-query-error";
+import KintoneQueryError from "./kintone-query-error";
 import KintoneQueryBufferElement from "./kintone-query-buffer-element";
 import {ConjType} from "./kintone-query-buffer-interface";
 

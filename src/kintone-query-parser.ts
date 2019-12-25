@@ -5,7 +5,7 @@ import OrderByParser from "./parser/order-by-parser";
 import LimitParser from "./parser/limit-parser";
 import OffsetParser from "./parser/offset-parser";
 import ParserInterface from "./parser/parser-interface";
-import {KintoneQueryError} from "./kintone-query-error";
+import KintoneQueryError from "./kintone-query-error";
 
 const queryBnf =
     `query           ::= SPACES? conditions? order_by_clause? limit_clause? offset_clause? SPACES?
