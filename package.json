@@ -1,6 +1,6 @@
 {
   "name": "kintone-query-builder",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "kintone query builder and parser",
   "main": "./dist/main.js",
   "files": [
@@ -10,13 +10,19 @@
     "build": "tsc -b tsconfig.json",
     "test": "jest",
     "testWithCoverage": "jest --coverage",
-    "lint": "eslint src tests --ext .ts"
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix"
   },
   "keywords": [
     "kintone"
   ],
+  "homepage": "https://github.com/toyokumo/kintone-query-builder-js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toyokumo/kintone-query-builder-js"
+  },
   "author": "toyokumo",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^24.0.17",
     "@typescript-eslint/eslint-plugin": "^2.13.0",
