@@ -1,5 +1,5 @@
 import KintoneQueryBuilder from "../src/kintone-query-builder";
-import KintoneQueryExpr, {Operator} from "../src/kintone-query-expr";
+import KintoneQueryExpression, {Operator} from "../src/kintone-query-expression";
 
 describe("Build Conditions", () => {
     it("build by where", () => {
@@ -181,12 +181,12 @@ describe("Build Complex Query", () => {
     it("build or-and condition", () => {
         const query = new KintoneQueryBuilder()
             .where(
-                new KintoneQueryExpr()
+                new KintoneQueryExpression()
                     .where('foo', '=', 20)
                     .orWhere('bar', '=', 20)
             )
             .where(
-                new KintoneQueryExpr()
+                new KintoneQueryExpression()
                     .where('pog', '=', 30)
                     .orWhere('puga', '=', 30)
             )
@@ -197,12 +197,12 @@ describe("Build Complex Query", () => {
     it("build and-or condition", () => {
         const query = new KintoneQueryBuilder()
             .where(
-                new KintoneQueryExpr()
+                new KintoneQueryExpression()
                     .where('a', '<', 1)
                     .andWhere('b', '<', 1)
             )
             .orWhere(
-                new KintoneQueryExpr()
+                new KintoneQueryExpression()
                     .where('c', '<', 1)
                     .andWhere('d', '<', 1)
             )
@@ -213,9 +213,9 @@ describe("Build Complex Query", () => {
     it("build deep condition", () => {
         const query = new KintoneQueryBuilder()
             .where(
-                new KintoneQueryExpr()
+                new KintoneQueryExpression()
                     .where(
-                        new KintoneQueryExpr()
+                        new KintoneQueryExpression()
                             .where('a', '=', 1)
                             .andWhere('b', '=', 1)
                     )
@@ -233,16 +233,16 @@ describe("Build Complex Query", () => {
 
     it("build from multi empty condition", () => {
         const query = new KintoneQueryBuilder()
-            .where(new KintoneQueryExpr())
-            .where(new KintoneQueryExpr())
-            .where(new KintoneQueryExpr())
+            .where(new KintoneQueryExpression())
+            .where(new KintoneQueryExpression())
+            .where(new KintoneQueryExpression())
             .build();
         expect(query).toEqual('');
     });
 
     it("build from expr", () => {
         const query = new KintoneQueryBuilder()
-            .where(new KintoneQueryExpr().where('x', '<', 1))
+            .where(new KintoneQueryExpression().where('x', '<', 1))
             .build();
         expect(query).toEqual('x < 1');
     });
@@ -250,11 +250,11 @@ describe("Build Complex Query", () => {
     it("build deep and condition", () => {
         const query = new KintoneQueryBuilder()
             .where(
-                new KintoneQueryExpr()
+                new KintoneQueryExpression()
                     .where(
-                        new KintoneQueryExpr()
+                        new KintoneQueryExpression()
                             .where(
-                                new KintoneQueryExpr()
+                                new KintoneQueryExpression()
                                     .where('a', '<', 10)
                                     .where('x', '<', 100)
                             )
@@ -269,8 +269,8 @@ describe("Build Complex Query", () => {
 
     it("remove empty condition", () => {
         const query = new KintoneQueryBuilder()
-            .where(new KintoneQueryExpr())
-            .where(new KintoneQueryExpr().where('x', '<', 10))
+            .where(new KintoneQueryExpression())
+            .where(new KintoneQueryExpression().where('x', '<', 10))
             .build();
         expect(query).toEqual('x < 10');
     });

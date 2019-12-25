@@ -5,13 +5,15 @@ import {ConjType} from "./kintone-query-buffer-interface";
 
 export type Operator = '=' | '<' | '>' | '<=' | '>=' | '!=' | 'in' | 'not in' | 'like' | 'not like';
 
+type ValueType = string | number | (string | number)[];
+
 /**
  * This class builds logical condition clauses.
  * Note that you can't specify 'offset' or 'order by' with this class.
  * In that case, you should use KintoneQueryBuilder.
- * KintoneQueryExpr can be a argument of new KintoneQueryBuilder() to build  a nested query like '(A and B) or (C and D)'.
+ * KintoneQueryExpression can be a argument of new KintoneQueryBuilder() to build  a nested query like '(A and B) or (C and D)'.
  */
-export default class KintoneQueryExpr {
+export default class KintoneQueryExpression {
 
     protected buffer: KintoneQueryBuffer;
 
@@ -61,81 +63,81 @@ export default class KintoneQueryExpr {
         return s.split('"').join('\\"');
     }
 
-    private static valToString(val: string | number | (string | number)[]): string {
-        if (typeof val === "string") {
-            if (KintoneQueryExpr.funcCheck(val)) {
-                return val;
+    private static valueToString(value: ValueType): string {
+        if (typeof value === "string") {
+            if (KintoneQueryExpression.funcCheck(value)) {
+                return value;
             }
-            return '"' + KintoneQueryExpr.escapeDoubleQuote(val) + '"';
+            return '"' + KintoneQueryExpression.escapeDoubleQuote(value) + '"';
         }
-        if (typeof val === "number") {
-            return "" + val;
+        if (typeof value === "number") {
+            return "" + value;
         }
-        return '(' + val.map(KintoneQueryExpr.valToString).join(',') + ')';
+        return '(' + value.map(KintoneQueryExpression.valueToString).join(',') + ')';
     }
 
 
-    public static genWhereClause(variable: string,
-                                 operator: Operator,
-                                 val: string | number | (string | number)[]): string {
+    public static generateConditionClause(variable: string,
+                                          operator: Operator,
+                                          value: ValueType): string {
         if (operator === 'in' || operator === 'not in') {
-            if (!Array.isArray(val)) {
-                throw new KintoneQueryError('Invalid val type: In case operator === \'in\', val must be array, but given ' + typeof val)
+            if (!Array.isArray(value)) {
+                throw new KintoneQueryError('Invalid value type: In case operator === \'in\', value must be array, but given ' + typeof value)
             }
         }
-        return `${variable} ${operator} ${KintoneQueryExpr.valToString(val)}`;
+        return `${variable} ${operator} ${KintoneQueryExpression.valueToString(value)}`;
     }
 
     private whereWithVarOpVal(variable: string,
                               operator: Operator,
-                              val: string | number | (string | number)[],
+                              value: ValueType,
                               conj: ConjType): this {
         this.buffer.append(new KintoneQueryBufferElement(
-            KintoneQueryExpr.genWhereClause(variable, operator, val),
+            KintoneQueryExpression.generateConditionClause(variable, operator, value),
             conj)
         );
         return this;
     }
 
-    private whereWithExpr(expr: KintoneQueryExpr, conj: ConjType): this {
-        if (expr.buffer.isEmpty()) {
+    private whereWithExpr(expression: KintoneQueryExpression, conj: ConjType): this {
+        if (expression.buffer.isEmpty()) {
             return this;
         }
-        expr.buffer.setConj(conj);
-        this.buffer.append(expr.buffer);
+        expression.buffer.setConj(conj);
+        this.buffer.append(expression.buffer);
         return this;
     }
 
-    public where(varOrExpr: KintoneQueryExpr): this;
-    public where(varOrExpr: string, operator: Operator, val: string | number | (string | number)[]): this;
-    public where(varOrExpr: string | KintoneQueryExpr,
+    public where(varOrExpr: KintoneQueryExpression): this;
+    public where(varOrExpr: string, operator: Operator, value: ValueType): this;
+    public where(varOrExpr: string | KintoneQueryExpression,
                  operator?: Operator,
-                 val?: string | number | (string | number)[]): this {
-        if (varOrExpr instanceof KintoneQueryExpr) {
+                 value?: ValueType): this {
+        if (varOrExpr instanceof KintoneQueryExpression) {
             return this.andWhere(varOrExpr);
         }
-        return this.andWhere(varOrExpr, operator!, val!);
+        return this.andWhere(varOrExpr, operator!, value!);
     }
 
-    public andWhere(varOrExpr: KintoneQueryExpr): this;
-    public andWhere(varOrExpr: string, operator: Operator, val: string | number | (string | number)[]): this;
-    public andWhere(varOrExpr: string | KintoneQueryExpr,
+    public andWhere(varOrExpr: KintoneQueryExpression): this;
+    public andWhere(varOrExpr: string, operator: Operator, value: ValueType): this;
+    public andWhere(varOrExpr: string | KintoneQueryExpression,
                     operator?: Operator,
-                    val?: string | number | (string | number)[]): this {
-        if (varOrExpr instanceof KintoneQueryExpr) {
+                    value?: ValueType): this {
+        if (varOrExpr instanceof KintoneQueryExpression) {
             return this.whereWithExpr(varOrExpr, 'and');
         }
-        return this.whereWithVarOpVal(varOrExpr, operator!, val!, 'and');
+        return this.whereWithVarOpVal(varOrExpr, operator!, value!, 'and');
     }
 
-    public orWhere(varOrExpr: KintoneQueryExpr): this;
-    public orWhere(varOrExpr: string, operator: Operator, val: string | number | (string | number)[]): this;
-    public orWhere(varOrExpr: string | KintoneQueryExpr,
+    public orWhere(varOrExpr: KintoneQueryExpression): this;
+    public orWhere(varOrExpr: string, operator: Operator, value: ValueType): this;
+    public orWhere(varOrExpr: string | KintoneQueryExpression,
                    operator?: Operator,
-                   val?: string | number | (string | number)[]): this {
-        if (varOrExpr instanceof KintoneQueryExpr) {
+                   value?: ValueType): this {
+        if (varOrExpr instanceof KintoneQueryExpression) {
             return this.whereWithExpr(varOrExpr, 'or');
         }
-        return this.whereWithVarOpVal(varOrExpr, operator!, val!, 'or');
+        return this.whereWithVarOpVal(varOrExpr, operator!, value!, 'or');
     }
 }
