@@ -14,18 +14,50 @@ describe("Query test", () => {
 
         const query1 = new KintoneQueryBuilder().orderBy('id').build();
         expect(query1).toEqual('order by id');
+
+        const query2 = new KintoneQueryBuilder().orderBy('id').orderBy('field', 'asc').build();
+        expect(query2).toEqual('order by id,field asc');
+    });
+
+    it("testClearOrderBy", () => {
+        const builder = new KintoneQueryBuilder();
+        const query0 = builder
+            .orderBy('id', 'asc')
+            .orderBy('field', 'asc')
+            .build();
+        expect(query0).toEqual('order by id asc,field asc');
+
+        const query1 = builder.orderBy(null).build();
+        expect(query1).toEqual('');
     });
 
     it('testLimit', () => {
-        const builder = new KintoneQueryBuilder();
-        const query = builder.limit(10).build();
+        const builder = new KintoneQueryBuilder(), query = builder.limit(10).build();
         expect(query).toEqual('limit 10');
+    });
+
+    it('testClearLimit', () => {
+        const builder = new KintoneQueryBuilder();
+        const query0 = builder.limit(10).build();
+        expect(query0).toEqual('limit 10');
+
+        const query1 = builder.limit(null).build();
+        expect(query1).toEqual('');
     });
 
     it('testOffset', () => {
         const builder = new KintoneQueryBuilder();
         const query = builder.offset(30).build();
         expect(query).toEqual('offset 30');
+    });
+
+    it('testClearOffset', () => {
+        const builder = new KintoneQueryBuilder();
+        const query0 = builder.offset(30).build();
+        expect(query0).toEqual('offset 30');
+
+        const query1 = builder.offset(null).build();
+        expect(query1).toEqual('');
     });
 
     it('testMethodChainOrder', () => {
@@ -99,6 +131,7 @@ describe("Query test", () => {
         ['time', '=', 'NOW()', 'time = NOW()'],
         ['time', '=', 'TODAY()', 'time = TODAY()'],
         ['time', '<', 'FROM_TODAY(5,DAYS)', 'time < FROM_TODAY(5,DAYS)'],
+        ['time', '<', 'FROM_TODAY(-15,DAYS)', 'time < FROM_TODAY(-15,DAYS)'],
         ['time', '=', 'THIS_WEEK(SUNDAY)', 'time = THIS_WEEK(SUNDAY)'],
         ['time', '=', 'THIS_WEEK()', 'time = THIS_WEEK()'],
         ['time', '=', 'LAST_WEEK(SUNDAY)', 'time = LAST_WEEK(SUNDAY)'],

@@ -10,7 +10,13 @@ export default class KintoneQueryBuilder extends KintoneQueryExpr {
     private limitClause: string = '';
     private offsetClause: string = '';
 
-    public orderBy(variable: string, order?: string): this {
+    public orderBy(variable: null): this;
+    public orderBy(variable: string, order?: string): this;
+    public orderBy(variable: string|null, order?: string): this {
+        if (variable === null) {
+            this.orderClause = '';
+            return this;
+        }
         if (this.orderClause === '') {
             this.orderClause = `order by ${variable}`;
         } else {
@@ -23,12 +29,20 @@ export default class KintoneQueryBuilder extends KintoneQueryExpr {
         return this;
     }
 
-    public limit(n: number): this {
+    public limit(n: number|null): this {
+        if (n === null) {
+            this.limitClause = '';
+            return this;
+        }
         this.limitClause = `limit ${n}`;
         return this;
     }
 
-    public offset(n: number): this {
+    public offset(n: number|null): this {
+        if (n === null) {
+            this.offsetClause = '';
+            return this;
+        }
         this.offsetClause = `offset ${n}`;
         return this;
     }
