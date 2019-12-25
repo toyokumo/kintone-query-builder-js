@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "kintone query builder and parser",
   "main": "./dist/main.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc -b tsconfig.json",
     "test": "jest",
     "testWithCoverage": "jest --coverage",
-    "tokenizerTest": "jest tokenizer",
     "lint": "eslint src tests --ext .ts"
   },
   "keywords": [
