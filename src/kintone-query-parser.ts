@@ -52,15 +52,14 @@ const elementParsers = new Map<string, ParserInterface>([
     ['offset_clause', new OffsetParser()],
 ]);
 
+const queryParser = new Grammars.W3C.Parser(queryBnf, null);
+
 export default class KintoneQueryParser {
-
-    private queryParser = new Grammars.W3C.Parser(queryBnf, null);
-
     public parse(query: string): KintoneQueryBuilder {
         if (query === '') {
             return new KintoneQueryBuilder();
         }
-        const ast = this.queryParser.getAST(query);
+        const ast = queryParser.getAST(query);
         if (!ast) {
             throw new KintoneQueryError(`failed to parse query "${query}"`);
         }
