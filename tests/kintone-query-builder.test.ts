@@ -1,5 +1,5 @@
 import KintoneQueryBuilder from "../src/kintone-query-builder";
-import KintoneQueryExpr from "../src/kintone-query-expr";
+import KintoneQueryExpr, {Operator} from "../src/kintone-query-expr";
 
 describe("Query test", () => {
     it("testWhere", () => {
@@ -146,7 +146,7 @@ describe("Query test", () => {
         ['time', '=', 'LAST_MONTH(81)', 'time = "LAST_MONTH(81)"'],
         ['time', '=', 'THIS_YEAR()', 'time = THIS_YEAR()']
     ])('testFunctionQuery', (a, b, c, expected) => {
-        const query = new KintoneQueryBuilder().where(a, b, c).build();
+        const query = new KintoneQueryBuilder().where(a, b as Operator, c).build();
         expect(query).toEqual(expected);
     });
 
