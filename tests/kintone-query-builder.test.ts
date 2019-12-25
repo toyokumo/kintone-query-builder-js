@@ -1,85 +1,44 @@
 import KintoneQueryBuilder from "../src/kintone-query-builder";
 import KintoneQueryExpr, {Operator} from "../src/kintone-query-expr";
 
-describe("Query test", () => {
-    it("testWhere", () => {
-        const builder = new KintoneQueryBuilder();
-        const query = builder.where('name', '=', 'hoge').build();
-        expect(query).toEqual('name = "hoge"');
-    });
+describe("Build Conditions", () => {
+    it("build by where", () => {
+        const query0 = new KintoneQueryBuilder().where('name', '=', 'hoge').build();
+        expect(query0).toEqual('name = "hoge"');
 
-    it("testOrderBy", () => {
-        const query0 = new KintoneQueryBuilder().orderBy('id', 'asc').build();
-        expect(query0).toEqual('order by id asc');
-
-        const query1 = new KintoneQueryBuilder().orderBy('id').build();
-        expect(query1).toEqual('order by id');
-
-        const query2 = new KintoneQueryBuilder().orderBy('id').orderBy('field', 'asc').build();
-        expect(query2).toEqual('order by id,field asc');
-    });
-
-    it("testClearOrderBy", () => {
-        const builder = new KintoneQueryBuilder();
-        const query0 = builder
-            .orderBy('id', 'asc')
-            .orderBy('field', 'asc')
-            .build();
-        expect(query0).toEqual('order by id asc,field asc');
-
-        const query1 = builder.orderBy(null).build();
-        expect(query1).toEqual('');
-    });
-
-    it('testLimit', () => {
-        const builder = new KintoneQueryBuilder(), query = builder.limit(10).build();
-        expect(query).toEqual('limit 10');
-    });
-
-    it('testClearLimit', () => {
-        const builder = new KintoneQueryBuilder();
-        const query0 = builder.limit(10).build();
-        expect(query0).toEqual('limit 10');
-
-        const query1 = builder.limit(null).build();
-        expect(query1).toEqual('');
-    });
-
-    it('testOffset', () => {
-        const builder = new KintoneQueryBuilder();
-        const query = builder.offset(30).build();
-        expect(query).toEqual('offset 30');
-    });
-
-    it('testClearOffset', () => {
-        const builder = new KintoneQueryBuilder();
-        const query0 = builder.offset(30).build();
-        expect(query0).toEqual('offset 30');
-
-        const query1 = builder.offset(null).build();
-        expect(query1).toEqual('');
-    });
-
-    it('testMethodChainOrder', () => {
         const query1 = new KintoneQueryBuilder()
-            .orderBy('$id', 'desc')
-            .limit(50)
-            .where('age', '>', '20')
+            .where('field1', '<', '100')
+            .where('$id', '!=', 50)
             .build();
-        const query0 = new KintoneQueryBuilder()
-            .where('age', '>', '20')
-            .orderBy('$id', 'desc')
-            .limit(50)
-            .build();
-        expect(query0).toEqual(query1);
+        expect(query1).toEqual('field1 < "100" and $id != 50');
     });
 
-    it('testLike', () => {
+    it('build by andWhere', () => {
+        const query0 = new KintoneQueryBuilder()
+            .where('age', '>', 10)
+            .andWhere('name', 'like', 'banana')
+            .andWhere('name', '!=', 'banana')
+            .build();
+        expect(query0).toEqual('age > 10 and name like "banana" and name != "banana"');
+
+        const query1 = new KintoneQueryBuilder().andWhere('x', '>', 10).build();
+        expect(query1).toEqual('x > 10')
+    });
+
+    it('build by orWhere', () => {
+        const query = new KintoneQueryBuilder()
+            .where('age', '=', 20)
+            .orWhere('name', '=', 'bob')
+            .build();
+        expect(query).toEqual('age = 20 or name = "bob"');
+    });
+
+    it('build like condition', () => {
         const query = new KintoneQueryBuilder().where('name', 'like', 'hog').build();
         expect(query).toEqual('name like "hog"');
     });
 
-    it('testIn', () => {
+    it('build in condition', () => {
         const query0 = new KintoneQueryBuilder()
             .where('favorite', 'in', ['apple', 'banana', 'orange'])
             .build();
@@ -94,35 +53,6 @@ describe("Query test", () => {
             .where('favorite', 'not in', ['kiwi', 'cherry'])
             .build();
         expect(query2).toEqual('favorite not in ("kiwi","cherry")');
-    });
-
-    it('testAndWhere', () => {
-        const query0 = new KintoneQueryBuilder()
-            .where('age', '>', 10)
-            .andWhere('name', 'like', 'banana')
-            .andWhere('name', '!=', 'banana')
-            .build();
-        expect(query0).toEqual('age > 10 and name like "banana" and name != "banana"');
-
-        const query1 = new KintoneQueryBuilder().andWhere('x', '>', 10).build();
-        expect(query1).toEqual('x > 10')
-    });
-
-    it('testOrWhere', () => {
-        const query = new KintoneQueryBuilder()
-            .where('age', '=', 20)
-            .orWhere('name', '=', 'bob')
-            .build();
-        expect(query).toEqual('age = 20 or name = "bob"');
-    });
-
-    it('testOrderByChain', () => {
-        const query = new KintoneQueryBuilder()
-            .orderBy('$id', 'desc')
-            .orderBy('name', 'asc')
-            .orderBy('age', 'desc')
-            .build();
-        expect(query).toEqual('order by $id desc,name asc,age desc');
     });
 
     it.each([
@@ -145,81 +75,111 @@ describe("Query test", () => {
         ['time', '=', 'LAST_MONTH(1)', 'time = LAST_MONTH(1)'],
         ['time', '=', 'LAST_MONTH(81)', 'time = "LAST_MONTH(81)"'],
         ['time', '=', 'THIS_YEAR()', 'time = THIS_YEAR()']
-    ])('testFunctionQuery', (a, b, c, expected) => {
+    ])('build condition with function', (a, b, c, expected) => {
         const query = new KintoneQueryBuilder().where(a, b as Operator, c).build();
         expect(query).toEqual(expected);
     });
+});
 
-    it('testComplicatedWhere', () => {
+describe("Build Order-by", () => {
+    it("build single sorter", () => {
+        const query0 = new KintoneQueryBuilder().orderBy('id', 'asc').build();
+        expect(query0).toEqual('order by id asc');
+
+        const query1 = new KintoneQueryBuilder().orderBy('id').build();
+        expect(query1).toEqual('order by id');
+    });
+
+    it('build multi sorter', () => {
+        const query = new KintoneQueryBuilder()
+            .orderBy('$id', 'desc')
+            .orderBy('name', 'asc')
+            .orderBy('age', 'desc')
+            .orderBy('address')
+            .build();
+        expect(query).toEqual('order by $id desc,name asc,age desc,address');
+    });
+
+    it("clear order-by", () => {
+        const query = new KintoneQueryBuilder()
+            .orderBy('id', 'asc')
+            .orderBy(null)
+            .build();
+        expect(query).toEqual('');
+    });
+});
+
+describe("Build Limit", () => {
+    it('build limit', () => {
+        const query = new KintoneQueryBuilder().limit(10).build();
+        expect(query).toEqual('limit 10');
+    });
+
+    it('clear limit', () => {
+        const query = new KintoneQueryBuilder().limit(10).limit(null).build();
+        expect(query).toEqual('');
+    });
+
+    it('override limit', () => {
+        const builder = new KintoneQueryBuilder().where('age', '>', 20);
+        const query0 = builder.limit(10).build();
+        expect(query0).toEqual('age > 20 limit 10');
+        const query1 = builder.limit(20).build();
+        expect(query1).toEqual('age > 20 limit 20');
+    });
+});
+
+describe("Build Offset", () => {
+    it('build offset', () => {
+        const query = new KintoneQueryBuilder().offset(30).build();
+        expect(query).toEqual('offset 30');
+    });
+
+    it('clear offset', () => {
+        const query = new KintoneQueryBuilder().offset(30).offset(null).build();
+        expect(query).toEqual('');
+    });
+
+    it('override offset', () => {
+        const builder = new KintoneQueryBuilder().where('age', '>', 20);
+        const query0 = builder.offset(10).build();
+        expect(query0).toEqual('age > 20 offset 10');
+        const query1 = builder.offset(20).build();
+        expect(query1).toEqual('age > 20 offset 20');
+    });
+});
+
+describe("Build Quoted Query", () => {
+    it('build query with double quote', () => {
         const query0 = new KintoneQueryBuilder()
-            .where('x', '<', 1)
-            .where('y', '<', 2)
-            .where('z', '<', 1)
+            .where('name', '=', 'ho"ge')
             .build();
-        expect(query0).toEqual('x < 1 and y < 2 and z < 1');
+        expect(query0).toEqual('name = "ho\\"ge"');
 
-// A and (B or C)
         const query1 = new KintoneQueryBuilder()
-            .where('huga', '<', 1)
-            .where(
-                new KintoneQueryExpr()
-                    .where('piga', '<', 1)
-                    .orWhere('fuga', '<', 1)
-            )
+            .where('name', 'in', ['ho"ge', 'po"ga', 'piga"""'])
             .build();
-        expect(query1).toEqual('huga < 1 and (piga < 1 or fuga < 1)');
+        expect(query1).toEqual('name in ("ho\\"ge","po\\"ga","piga\\"\\"\\"")');
+    });
+});
 
-// (A and B) or (C and D)
-        const query2 = new KintoneQueryBuilder()
-            .where(
-                new KintoneQueryExpr()
-                    .where('a', '<', 1)
-                    .andWhere('b', '<', 1)
-            )
-            .orWhere(
-                new KintoneQueryExpr()
-                    .where('c', '<', 1)
-                    .andWhere('d', '<', 1)
-            )
+describe("Build Complex Query", () => {
+    it('build same query regardless of method order', () => {
+        const query1 = new KintoneQueryBuilder()
+            .orderBy('$id', 'desc')
+            .limit(50)
+            .where('age', '>', '20')
             .build();
-        expect(query2).toEqual('(a < 1 and b < 1) or (c < 1 and d < 1)');
-
-// (((A and B) or C) and D)
-        const query3 = new KintoneQueryBuilder()
-            .where(
-                new KintoneQueryExpr()
-                    .where(
-                        new KintoneQueryExpr()
-                            .where('a', '=', 1)
-                            .andWhere('b', '=', 1)
-                    )
-                    .orWhere('c', '=', 1)
-            )
-            .andWhere('d', '=', 1)
+        const query0 = new KintoneQueryBuilder()
+            .where('age', '>', '20')
+            .orderBy('$id', 'desc')
+            .limit(50)
             .build();
-        expect(query3).toEqual('((a = 1 and b = 1) or c = 1) and d = 1');
+        expect(query0).toEqual(query1);
+    });
 
-        const query4 = new KintoneQueryBuilder().build();
-        expect(query4).toEqual('');
-
-        const query5 = new KintoneQueryBuilder()
-            .where(new KintoneQueryExpr())
-            .where(new KintoneQueryExpr())
-            .where(new KintoneQueryExpr())
-            .build();
-        expect(query5).toEqual('');
-
-        const query6 = new KintoneQueryBuilder()
-            .where(new KintoneQueryExpr().where('x', '<', 1))
-            .build();
-        expect(query6).toEqual('x < 1');
-
-        const query7 = new KintoneQueryBuilder()
-            .where(new KintoneQueryExpr())
-            .build();
-        expect(query7).toEqual('');
-
-        const query8 = new KintoneQueryBuilder()
+    it("build or-and condition", () => {
+        const query = new KintoneQueryBuilder()
             .where(
                 new KintoneQueryExpr()
                     .where('foo', '=', 20)
@@ -231,9 +191,64 @@ describe("Query test", () => {
                     .orWhere('puga', '=', 30)
             )
             .build();
-        expect(query8).toEqual('(foo = 20 or bar = 20) and (pog = 30 or puga = 30)');
+        expect(query).toEqual('(foo = 20 or bar = 20) and (pog = 30 or puga = 30)');
+    });
 
-        const query9 = new KintoneQueryBuilder()
+    it("build and-or condition", () => {
+        const query = new KintoneQueryBuilder()
+            .where(
+                new KintoneQueryExpr()
+                    .where('a', '<', 1)
+                    .andWhere('b', '<', 1)
+            )
+            .orWhere(
+                new KintoneQueryExpr()
+                    .where('c', '<', 1)
+                    .andWhere('d', '<', 1)
+            )
+            .build();
+        expect(query).toEqual('(a < 1 and b < 1) or (c < 1 and d < 1)');
+    });
+
+    it("build deep condition", () => {
+        const query = new KintoneQueryBuilder()
+            .where(
+                new KintoneQueryExpr()
+                    .where(
+                        new KintoneQueryExpr()
+                            .where('a', '=', 1)
+                            .andWhere('b', '=', 1)
+                    )
+                    .orWhere('c', '=', 1)
+            )
+            .andWhere('d', '=', 1)
+            .build();
+        expect(query).toEqual('((a = 1 and b = 1) or c = 1) and d = 1');
+    });
+
+    it("build empty", () => {
+        const query = new KintoneQueryBuilder().build();
+        expect(query).toEqual('');
+    });
+
+    it("build from multi empty condition", () => {
+        const query = new KintoneQueryBuilder()
+            .where(new KintoneQueryExpr())
+            .where(new KintoneQueryExpr())
+            .where(new KintoneQueryExpr())
+            .build();
+        expect(query).toEqual('');
+    });
+
+    it("build from expr", () => {
+        const query = new KintoneQueryBuilder()
+            .where(new KintoneQueryExpr().where('x', '<', 1))
+            .build();
+        expect(query).toEqual('x < 1');
+    });
+
+    it("build deep and condition", () => {
+        const query = new KintoneQueryBuilder()
             .where(
                 new KintoneQueryExpr()
                     .where(
@@ -249,46 +264,14 @@ describe("Query test", () => {
             )
             .where('d', '<', 10)
             .build();
-        expect(query9).toEqual('(((a < 10 and x < 100) and b < 30) and c < 20) and d < 10');
+        expect(query).toEqual('(((a < 10 and x < 100) and b < 30) and c < 20) and d < 10');
+    });
 
-        const query10 = new KintoneQueryBuilder()
+    it("remove empty condition", () => {
+        const query = new KintoneQueryBuilder()
             .where(new KintoneQueryExpr())
             .where(new KintoneQueryExpr().where('x', '<', 10))
             .build();
-        expect(query10).toEqual('x < 10');
-
-        const query11 = new KintoneQueryBuilder()
-            .where(new KintoneQueryExpr())
-            .andWhere(new KintoneQueryExpr().where('x', '<', 10))
-            .build();
-        expect(query11).toEqual('x < 10');
-    });
-
-    it('testEscape', () => {
-        const query0 = new KintoneQueryBuilder()
-            .where('name', '=', 'ho"ge')
-            .build();
-        expect(query0).toEqual('name = "ho\\"ge"');
-        const query1 = new KintoneQueryBuilder()
-            .where('name', 'in', ['ho"ge', 'po"ga', 'piga"""'])
-            .build();
-        expect(query1).toEqual('name in ("ho\\"ge","po\\"ga","piga\\"\\"\\"")');
-    });
-
-    it('testOffsetTwice', () => {
-        const builder = new KintoneQueryBuilder().where('age', '>', 20);
-        const query0 = builder.offset(10).build();
-        expect(query0).toEqual('age > 20 offset 10');
-        const query1 = builder.offset(20).build();
-        expect(query1).toEqual('age > 20 offset 20');
-    });
-
-    it('testLimitTwice', () => {
-        const builder = new KintoneQueryBuilder().where('age', '>', 20);
-        const query0 = builder.limit(10).build();
-        expect(query0).toEqual('age > 20 limit 10');
-        const query1 = builder.limit(20).build();
-        expect(query1).toEqual('age > 20 limit 20');
+        expect(query).toEqual('x < 10');
     });
 });
-

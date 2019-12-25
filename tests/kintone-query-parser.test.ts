@@ -1,8 +1,8 @@
 import KintoneQueryParser from "../src/kintone-query-parser";
 
-describe("monadic condition test", () => {
+describe("Parse Monadic Condition", () => {
     const parser = new KintoneQueryParser();
-    it("empty condition case", () => {
+    it("parse empty", () => {
         expect(parser.parse('').build()).toEqual('');
     });
 
@@ -17,7 +17,7 @@ describe("monadic condition test", () => {
         ['  field     >  "abcd."   ', 'field > "abcd."'],
         ['field<"abcd.\\"\\""', 'field < "abcd.\\"\\""'],
         ['field<FROM_TODAY(10,DAYS)', 'field < FROM_TODAY(10,DAYS)'],
-    ])("compare-condition case", (query, expected) => {
+    ])("parse compare-condition", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 
@@ -26,7 +26,7 @@ describe("monadic condition test", () => {
         ['   フィールド  like  "値"   ', 'フィールド like "値"'],
         [' f__1 not     like  ""   ', 'f__1 not like ""'],
         [' f__1 not like "\\"string\\""', 'f__1 not like "\\"string\\""'],
-    ])("like-condition case", (query, expected) => {
+    ])("parse like-condition", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 
@@ -35,7 +35,7 @@ describe("monadic condition test", () => {
         ['フィールド in ("val",100,-1.25,"")', 'フィールド in ("val",100,-1.25,"")'],
         ['     f__1 not   in ( "\\"string"    ,   -0.001   ) ', 'f__1 not in ("\\"string",-0.001)'],
         ['field in (FROM_TODAY(1,DAYS),FROM_TODAY(2,DAYS))', 'field in (FROM_TODAY(1,DAYS),FROM_TODAY(2,DAYS))'],
-    ])("in-condition case", (query, expected) => {
+    ])("parse in-condition", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 
@@ -56,12 +56,12 @@ describe("monadic condition test", () => {
         ['field=LAST_MONTH(1)', 'field = LAST_MONTH(1)'],
         ['field=LAST_MONTH(LAST)', 'field = LAST_MONTH(LAST)'],
         ['field=THIS_YEAR()', 'field = THIS_YEAR()'],
-    ])("function-query case", (query, expected) => {
+    ])("parse function-query", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 });
 
-describe("combination condition test", () => {
+describe("Parse Combination Condition", () => {
     const parser = new KintoneQueryParser();
     it.each([
         ['field=123 and field2<=0', '(field = 123 and field2 <= 0)'],
@@ -70,7 +70,7 @@ describe("combination condition test", () => {
         ['field like "val" and フィールド in (0,1,2)', '(field like "val" and フィールド in (0,1,2))'],
         ['$id=123 and f1=123 and f2<TODAY() and f3!=THIS_YEAR()', '($id = 123 and f1 = 123 and f2 < TODAY() and f3 != THIS_YEAR())'],
         [' field  =123  and  field2<= 0  ', '(field = 123 and field2 <= 0)'],
-    ])("and-condition case", (query, expected) => {
+    ])("parse and-condition", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 
@@ -81,7 +81,7 @@ describe("combination condition test", () => {
         ['field like "val" or フィールド in (0,1,2)', '(field like "val" or フィールド in (0,1,2))'],
         ['$id=123 or f1=123 or f2<TODAY() or f3!=THIS_YEAR()', '($id = 123 or f1 = 123 or f2 < TODAY() or f3 != THIS_YEAR())'],
         [' field  =123  or  field2<= 0  ', '(field = 123 or field2 <= 0)'],
-    ])("or-condition case", (query, expected) => {
+    ])("parse or-condition", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 
@@ -90,19 +90,19 @@ describe("combination condition test", () => {
         ['f1=1 or f2=2 and f3=3', '(f1 = 1 or (f2 = 2 and f3 = 3))'],
         ['(f1=1 or f2=2) and f3=3', '((f1 = 1 or f2 = 2) and f3 = 3)'],
         ['((f1=1 or f2=2) and f3=3) or (f4=4 and f5=5)', '(((f1 = 1 or f2 = 2) and f3 = 3) or (f4 = 4 and f5 = 5))'],
-    ])("complex-condition case", (query, expected) => {
+    ])("parse complex-condition", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 });
 
-describe("order-by test", () => {
+describe("Parse Order-by", () => {
     const parser = new KintoneQueryParser();
     it.each([
         ['order by field asc', 'order by field asc'],
         ['order by フィールド desc', 'order by フィールド desc'],
         ['order by f__1', 'order by f__1'],
         ['  order by    field     asc ', 'order by field asc'],
-    ])("monadic order-by case", (query, expected) => {
+    ])("parse monadic order-by", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 
@@ -110,33 +110,33 @@ describe("order-by test", () => {
         ['order by field asc, f2, $id desc', 'order by field asc,f2,$id desc'],
         ['order by f1,f2,f3', 'order by f1,f2,f3'],
         ['  order by  field   asc ,  f2  ,  $id   desc ', 'order by field asc,f2,$id desc'],
-    ])("multi order-by case", (query, expected) => {
+    ])("parse multi order-by", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 });
 
 
-describe("limit test", () => {
+describe("Parse Limit", () => {
     const parser = new KintoneQueryParser();
     it.each([
         ['limit 1', 'limit 1'],
         ['  limit   500 ', 'limit 500'],
-    ])("test", (query, expected) => {
+    ])("parse limit", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 });
 
-describe("offset test", () => {
+describe("Parse Offset", () => {
     const parser = new KintoneQueryParser();
     it.each([
         ['offset 1', 'offset 1'],
         ['  offset   500 ', 'offset 500'],
-    ])("test", (query, expected) => {
+    ])("parse offset", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 });
 
-describe("complex query test", () => {
+describe("Parse complex query", () => {
     const parser = new KintoneQueryParser();
     it.each([
         ['order by field asc limit 1', 'order by field asc limit 1'],
@@ -144,7 +144,7 @@ describe("complex query test", () => {
         ['order by field asc,f2 desc,f3 limit 1 offset 500', 'order by field asc,f2 desc,f3 limit 1 offset 500'],
         ['limit 1 offset 500', 'limit 1 offset 500'],
         [' order by  field   limit 1  offset  0 ', 'order by field limit 1 offset 0'],
-    ])("no condition case", (query, expected) => {
+    ])("parse no condition query", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 
@@ -153,7 +153,7 @@ describe("complex query test", () => {
         ['(f1=1 or f2=2) and f3=3 order by field asc limit 1', '((f1 = 1 or f2 = 2) and f3 = 3) order by field asc limit 1'],
         ['((f1=1 or f2=2) and f3=3) or (f4=4 and f5=5) order by field asc,f2 desc,f3 limit 1 offset 500',
             '(((f1 = 1 or f2 = 2) and f3 = 3) or (f4 = 4 and f5 = 5)) order by field asc,f2 desc,f3 limit 1 offset 500'],
-    ])("with condition case", (query, expected) => {
+    ])("parse condition query", (query, expected) => {
         expect(parser.parse(query).build()).toEqual(expected);
     });
 });
