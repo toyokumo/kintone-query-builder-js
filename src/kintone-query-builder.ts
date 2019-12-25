@@ -11,8 +11,8 @@ export default class KintoneQueryBuilder extends KintoneQueryExpr {
     private offsetClause: string = '';
 
     public orderBy(variable: null): this;
-    public orderBy(variable: string, order?: string): this;
-    public orderBy(variable: string|null, order?: string): this {
+    public orderBy(variable: string, order?: 'asc'|'desc'): this;
+    public orderBy(variable: string|null, order?: 'asc'|'desc'): this {
         if (variable === null) {
             this.orderClause = '';
             return this;
@@ -48,15 +48,11 @@ export default class KintoneQueryBuilder extends KintoneQueryExpr {
     }
 
     public build(): string {
-        let query = '';
-        if (!this.buffer.isEmpty()) {
-            query = this.buffer.toQuery();
-        }
-        const clauses = [
+        return [
+            this.buffer.toQuery(),
             this.orderClause,
             this.limitClause,
             this.offsetClause,
-        ];
-        return clauses.filter(c => c !== '').reduce((q, c) => q === '' ? c : q + ' ' + c, query);
+        ].filter(c => c !== '').join(' ');
     }
 }

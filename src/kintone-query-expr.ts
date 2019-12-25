@@ -3,6 +3,8 @@ import {KintoneQueryError} from "./kintone-query-error";
 import KintoneQueryBufferElement from "./kintone-query-buffer-element";
 import {ConjType} from "./kintone-query-buffer-interface";
 
+export type Operator = '=' | '<' | '>' | '<=' | '>=' | '!=' | 'in' | 'not in' | 'like' | 'not like';
+
 /**
  * This class builds logical condition clauses.
  * Note that you can't specify 'offset' or 'order by' with this class.
@@ -74,7 +76,7 @@ export default class KintoneQueryExpr {
 
 
     public static genWhereClause(variable: string,
-                                 operator: string,
+                                 operator: Operator,
                                  val: string | number | (string | number)[]): string {
         if (operator === 'in' || operator === 'not in') {
             if (!Array.isArray(val)) {
@@ -85,7 +87,7 @@ export default class KintoneQueryExpr {
     }
 
     private whereWithVarOpVal(variable: string,
-                              operator: string,
+                              operator: Operator,
                               val: string | number | (string | number)[],
                               conj: ConjType): this {
         this.buffer.append(new KintoneQueryBufferElement(
@@ -105,9 +107,9 @@ export default class KintoneQueryExpr {
     }
 
     public where(varOrExpr: KintoneQueryExpr): this;
-    public where(varOrExpr: string, operator: string, val: string | number | (string | number)[]): this;
+    public where(varOrExpr: string, operator: Operator, val: string | number | (string | number)[]): this;
     public where(varOrExpr: string | KintoneQueryExpr,
-                 operator?: string,
+                 operator?: Operator,
                  val?: string | number | (string | number)[]): this {
         if (varOrExpr instanceof KintoneQueryExpr) {
             return this.andWhere(varOrExpr);
@@ -116,9 +118,9 @@ export default class KintoneQueryExpr {
     }
 
     public andWhere(varOrExpr: KintoneQueryExpr): this;
-    public andWhere(varOrExpr: string, operator: string, val: string | number | (string | number)[]): this;
+    public andWhere(varOrExpr: string, operator: Operator, val: string | number | (string | number)[]): this;
     public andWhere(varOrExpr: string | KintoneQueryExpr,
-                    operator?: string,
+                    operator?: Operator,
                     val?: string | number | (string | number)[]): this {
         if (varOrExpr instanceof KintoneQueryExpr) {
             return this.whereWithExpr(varOrExpr, 'and');
@@ -127,9 +129,9 @@ export default class KintoneQueryExpr {
     }
 
     public orWhere(varOrExpr: KintoneQueryExpr): this;
-    public orWhere(varOrExpr: string, operator: string, val: string | number | (string | number)[]): this;
+    public orWhere(varOrExpr: string, operator: Operator, val: string | number | (string | number)[]): this;
     public orWhere(varOrExpr: string | KintoneQueryExpr,
-                   operator?: string,
+                   operator?: Operator,
                    val?: string | number | (string | number)[]): this {
         if (varOrExpr instanceof KintoneQueryExpr) {
             return this.whereWithExpr(varOrExpr, 'or');
