@@ -1,7 +1,7 @@
-export type ConjType = 'and' | 'or' | null
+export type ConjType = "and" | "or" | null;
 
 export default interface KintoneQueryBufferInterface {
-    getConj(): ConjType;
+  getConj(): ConjType;
 
-    toQuery(hasParent: Boolean): string;
+  toQuery(hasParent: boolean): string;
 }
