@@ -4,9 +4,9 @@
   "description": "kintone query builder and parser",
   "main": "./dist/main.js",
   "scripts": {
-      "test": "jest",
-      "testWithCoverage": "jest --coverage",
-      "tokenizerTest": "jest tokenizer"
+    "test": "jest",
+    "testWithCoverage": "jest --coverage",
+    "tokenizerTest": "jest tokenizer"
   },
   "keywords": [
     "kintone"
@@ -19,6 +19,9 @@
     "gulp-typescript": "^5.0.1",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.5.3"
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "ebnf": "^1.8.0"
   }
 }

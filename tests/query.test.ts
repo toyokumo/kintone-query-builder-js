@@ -9,21 +9,55 @@ describe("Query test", () => {
     });
 
     it("testOrderBy", () => {
+        const query0 = new KintoneQueryBuilder().orderBy('id', 'asc').build();
+        expect(query0).toEqual('order by id asc');
+
+        const query1 = new KintoneQueryBuilder().orderBy('id').build();
+        expect(query1).toEqual('order by id');
+
+        const query2 = new KintoneQueryBuilder().orderBy('id').orderBy('field', 'asc').build();
+        expect(query2).toEqual('order by id,field asc');
+    });
+
+    it("testClearOrderBy", () => {
         const builder = new KintoneQueryBuilder();
-        const query = builder.orderBy('id', 'asc').build();
-        expect(query).toEqual('order by id asc');
+        const query0 = builder
+            .orderBy('id', 'asc')
+            .orderBy('field', 'asc')
+            .build();
+        expect(query0).toEqual('order by id asc,field asc');
+
+        const query1 = builder.orderBy(null).build();
+        expect(query1).toEqual('');
     });
 
     it('testLimit', () => {
-        const builder = new KintoneQueryBuilder();
-        const query = builder.limit(10).build();
+        const builder = new KintoneQueryBuilder(), query = builder.limit(10).build();
         expect(query).toEqual('limit 10');
+    });
+
+    it('testClearLimit', () => {
+        const builder = new KintoneQueryBuilder();
+        const query0 = builder.limit(10).build();
+        expect(query0).toEqual('limit 10');
+
+        const query1 = builder.limit(null).build();
+        expect(query1).toEqual('');
     });
 
     it('testOffset', () => {
         const builder = new KintoneQueryBuilder();
         const query = builder.offset(30).build();
         expect(query).toEqual('offset 30');
+    });
+
+    it('testClearOffset', () => {
+        const builder = new KintoneQueryBuilder();
+        const query0 = builder.offset(30).build();
+        expect(query0).toEqual('offset 30');
+
+        const query1 = builder.offset(null).build();
+        expect(query1).toEqual('');
     });
 
     it('testMethodChainOrder', () => {
@@ -97,6 +131,7 @@ describe("Query test", () => {
         ['time', '=', 'NOW()', 'time = NOW()'],
         ['time', '=', 'TODAY()', 'time = TODAY()'],
         ['time', '<', 'FROM_TODAY(5,DAYS)', 'time < FROM_TODAY(5,DAYS)'],
+        ['time', '<', 'FROM_TODAY(-15,DAYS)', 'time < FROM_TODAY(-15,DAYS)'],
         ['time', '=', 'THIS_WEEK(SUNDAY)', 'time = THIS_WEEK(SUNDAY)'],
         ['time', '=', 'THIS_WEEK()', 'time = THIS_WEEK()'],
         ['time', '=', 'LAST_WEEK(SUNDAY)', 'time = LAST_WEEK(SUNDAY)'],
@@ -177,7 +212,7 @@ describe("Query test", () => {
         const query6 = new KintoneQueryBuilder()
             .where(new KintoneQueryExpr().where('x', '<', 1))
             .build();
-        expect(query6).toEqual('(x < 1)');
+        expect(query6).toEqual('x < 1');
 
         const query7 = new KintoneQueryBuilder()
             .where(new KintoneQueryExpr())
@@ -220,13 +255,13 @@ describe("Query test", () => {
             .where(new KintoneQueryExpr())
             .where(new KintoneQueryExpr().where('x', '<', 10))
             .build();
-        expect(query10).toEqual('(x < 10)');
+        expect(query10).toEqual('x < 10');
 
         const query11 = new KintoneQueryBuilder()
             .where(new KintoneQueryExpr())
             .andWhere(new KintoneQueryExpr().where('x', '<', 10))
             .build();
-        expect(query11).toEqual('(x < 10)');
+        expect(query11).toEqual('x < 10');
     });
 
     it('testEscape', () => {
