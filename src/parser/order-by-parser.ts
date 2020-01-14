@@ -12,7 +12,8 @@ export default class OrderByParser implements ParserInterface {
 
     private applySorter(builder: KintoneQueryBuilder, token: IToken): void {
         const field = token.children.find(t => t.type === 'field')!.text;
-        const order = token.children.find(t => t.type === 'sort_order')?.text;
-        builder.orderBy(field, order ? order : '');
+        const order = token.children
+            .find(t => t.type === 'sort_order')?.text as 'asc'|'desc'|undefined;
+        builder.orderBy(field, order);
     }
 }

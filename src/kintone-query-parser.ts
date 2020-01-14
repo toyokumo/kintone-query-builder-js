@@ -5,7 +5,7 @@ import OrderByParser from "./parser/order-by-parser";
 import LimitParser from "./parser/limit-parser";
 import OffsetParser from "./parser/offset-parser";
 import ParserInterface from "./parser/parser-interface";
-import {KintoneQueryError} from "./kintone-query-error";
+import KintoneQueryError from "./kintone-query-error";
 
 const queryBnf =
     `query           ::= SPACES? conditions? order_by_clause? limit_clause? offset_clause? SPACES?
@@ -52,15 +52,14 @@ const elementParsers = new Map<string, ParserInterface>([
     ['offset_clause', new OffsetParser()],
 ]);
 
+const queryParser = new Grammars.W3C.Parser(queryBnf, null);
+
 export default class KintoneQueryParser {
-
-    private queryParser = new Grammars.W3C.Parser(queryBnf, null);
-
     public parse(query: string): KintoneQueryBuilder {
         if (query === '') {
             return new KintoneQueryBuilder();
         }
-        const ast = this.queryParser.getAST(query);
+        const ast = queryParser.getAST(query);
         if (!ast) {
             throw new KintoneQueryError(`failed to parse query "${query}"`);
         }

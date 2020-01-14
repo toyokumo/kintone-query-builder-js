@@ -5,14 +5,13 @@
     "src/kintone-query-buffer.ts",
     "src/kintone-query-builder.ts",
     "src/kintone-query-error.ts",
-    "src/kintone-query-expr.ts",
+    "src/kintone-query-expression.ts",
     "src/kintone-query-parser.ts",
     "src/parser/conditions-parser.ts",
     "src/parser/limit-parser.ts",
     "src/parser/offset-parser.ts",
     "src/parser/order-by-parser.ts",
-    "src/parser/parser-interface.ts",
-    "src/main.ts"
+    "src/parser/parser-interface.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,
