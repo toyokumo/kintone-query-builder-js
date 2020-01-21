@@ -11,6 +11,14 @@ export default class KintoneQueryBuilder extends KintoneQueryExpression {
 
   public orderBy(variable: null): this;
   public orderBy(variable: string, order?: "asc" | "desc"): this;
+  /**
+   * Adds an "order by" clause.
+   * Calls this function twice or more for multi field "order by".
+   * If argument `variable` is `null`, clear "order by" clause.
+   *
+   * @param variable
+   * @param order
+   */
   public orderBy(variable: string | null, order?: "asc" | "desc"): this {
     if (variable === null) {
       this.orderClause = "";
@@ -28,6 +36,12 @@ export default class KintoneQueryBuilder extends KintoneQueryExpression {
     return this;
   }
 
+  /**
+   * Adds an "limit" clause.
+   * If argument `n` is `null`, clear "limit" clause.
+   *
+   * @param n
+   */
   public limit(n: number | null): this {
     if (n === null) {
       this.limitClause = "";
@@ -37,6 +51,12 @@ export default class KintoneQueryBuilder extends KintoneQueryExpression {
     return this;
   }
 
+  /**
+   * Adds an "limit" clause.
+   * If argument `n` is `null`, clear "limit" clause.
+   *
+   * @param n
+   */
   public offset(n: number | null): this {
     if (n === null) {
       this.offsetClause = "";
@@ -46,6 +66,9 @@ export default class KintoneQueryBuilder extends KintoneQueryExpression {
     return this;
   }
 
+  /**
+   * Builds query string.
+   */
   public build(): string {
     return [
       this.buffer.toQuery(),

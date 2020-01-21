@@ -87,7 +87,7 @@ export default class KintoneQueryExpression {
     );
   }
 
-  public static generateConditionClause(
+  private static generateConditionClause(
     variable: string,
     operator: Operator,
     value: ValueType
@@ -138,6 +138,13 @@ export default class KintoneQueryExpression {
 
   public where(varOrExpr: KintoneQueryExpression): this;
   public where(varOrExpr: string, operator: Operator, value: ValueType): this;
+  /**
+   * Adds query condition.
+   *
+   * @param varOrExpr
+   * @param operator
+   * @param value
+   */
   public where(
     varOrExpr: string | KintoneQueryExpression,
     operator?: Operator,
@@ -156,6 +163,14 @@ export default class KintoneQueryExpression {
     operator: Operator,
     value: ValueType
   ): this;
+  /**
+   * Adds query condition.
+   * The condition is connected to existing conditions by "and".
+   *
+   * @param varOrExpr
+   * @param operator
+   * @param value
+   */
   public andWhere(
     varOrExpr: string | KintoneQueryExpression,
     operator?: Operator,
@@ -170,6 +185,14 @@ export default class KintoneQueryExpression {
 
   public orWhere(varOrExpr: KintoneQueryExpression): this;
   public orWhere(varOrExpr: string, operator: Operator, value: ValueType): this;
+  /**
+   * Adds query condition.
+   * The condition is connected to existing conditions by "or".
+   *
+   * @param varOrExpr
+   * @param operator
+   * @param value
+   */
   public orWhere(
     varOrExpr: string | KintoneQueryExpression,
     operator?: Operator,
