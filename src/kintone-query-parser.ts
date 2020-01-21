@@ -1,4 +1,4 @@
-import {Grammars} from 'ebnf';
+import { Grammars } from "ebnf";
 import KintoneQueryBuilder from "./kintone-query-builder";
 import ConditionsParser from "./parser/conditions-parser";
 import OrderByParser from "./parser/order-by-parser";
@@ -7,8 +7,7 @@ import OffsetParser from "./parser/offset-parser";
 import ParserInterface from "./parser/parser-interface";
 import KintoneQueryError from "./kintone-query-error";
 
-const queryBnf =
-    `query           ::= SPACES? conditions? order_by_clause? limit_clause? offset_clause? SPACES?
+const queryBnf = `query           ::= SPACES? conditions? order_by_clause? limit_clause? offset_clause? SPACES?
 
 conditions      ::= and_conditions (SPACES 'or' SPACES and_conditions)*
 and_conditions  ::= parenethesized (SPACES 'and' SPACES parenethesized)*
@@ -46,30 +45,31 @@ DAY_OF_MONTH    ::= [1-2] [0-9] | '3' [0-1] | [1-9] | 'LAST'
 `;
 
 const elementParsers = new Map<string, ParserInterface>([
-    ['conditions', new ConditionsParser()],
-    ['order_by_clause', new OrderByParser()],
-    ['limit_clause', new LimitParser()],
-    ['offset_clause', new OffsetParser()],
+  ["conditions", new ConditionsParser()],
+  ["order_by_clause", new OrderByParser()],
+  ["limit_clause", new LimitParser()],
+  ["offset_clause", new OffsetParser()]
 ]);
 
 const queryParser = new Grammars.W3C.Parser(queryBnf, null);
 
 export default class KintoneQueryParser {
-    public parse(query: string): KintoneQueryBuilder {
-        if (query === '') {
-            return new KintoneQueryBuilder();
-        }
-        const ast = queryParser.getAST(query);
-        if (!ast) {
-            throw new KintoneQueryError(`failed to parse query "${query}"`);
-        }
-        if (ast.errors.length > 0) {
-            throw new KintoneQueryError(ast.errors[0].message, ast);
-        }
-        const builder = new KintoneQueryBuilder();
-        for (let child of ast.children) {
-            elementParsers.get(child.type)!.apply(builder, child);
-        }
-        return builder;
+  public parse(query: string): KintoneQueryBuilder {
+    if (query === "") {
+      return new KintoneQueryBuilder();
     }
+    const ast = queryParser.getAST(query);
+    if (!ast) {
+      throw new KintoneQueryError(`failed to parse query "${query}"`);
+    }
+    if (ast.errors.length > 0) {
+      throw new KintoneQueryError(ast.errors[0].message, ast);
+    }
+    const builder = new KintoneQueryBuilder();
+    for (const child of ast.children) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      elementParsers.get(child.type)!.apply(builder, child);
+    }
+    return builder;
+  }
 }
