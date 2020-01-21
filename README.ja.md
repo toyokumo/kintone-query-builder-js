@@ -53,21 +53,21 @@ while(records.length > 0) {
 ```
 
 
-## How to contribute
-Feel free to send us pull requests.
+## コントリビュート
+気軽にPull Requestを送ってください。
 ### Setup
 ```
 git clone https://github.com/toyokumo/kintone-query-builder-js.git
 npm install
 ```
 
-### Format
-Run `npm run lint:fix`
+### コードのフォーマット
+`npm run lint:fix`
 
-### Testing
-Run `npm test`.
+### テスト
+`npm test`.
 
-## License
+## ライセンス
 ```
 Copyright 2019 TOYOKUMO,Inc.
 
