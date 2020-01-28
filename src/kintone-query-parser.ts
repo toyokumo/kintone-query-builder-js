@@ -54,6 +54,12 @@ const elementParsers = new Map<string, ParserInterface>([
 const queryParser = new Grammars.W3C.Parser(queryBnf, null);
 
 export default class KintoneQueryParser {
+  /**
+   * Parses kintone query string.
+   * Returns query builder that returns the same query when call `build()`.
+   *
+   * @param query
+   */
   public parse(query: string): KintoneQueryBuilder {
     if (query === "") {
       return new KintoneQueryBuilder();

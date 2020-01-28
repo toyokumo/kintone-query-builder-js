@@ -1,32 +1,39 @@
 {
   "name": "kintone-query-builder",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "kintone query builder and parser",
   "main": "./dist/main.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc -b tsconfig.json",
     "test": "jest",
     "testWithCoverage": "jest --coverage",
-    "tokenizerTest": "jest tokenizer",
-    "lint": "eslint src tests --ext .ts"
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix"
   },
   "keywords": [
     "kintone"
   ],
+  "homepage": "https://github.com/toyokumo/kintone-query-builder-js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toyokumo/kintone-query-builder-js"
+  },
   "author": "toyokumo",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
-    "@types/jest": "^24.0.17",
-    "@typescript-eslint/eslint-plugin": "^2.13.0",
-    "@typescript-eslint/parser": "^2.13.0",
+    "@types/jest": "^24.9.0",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0",
     "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-prettier": "^3.1.2",
-    "gulp": "^4.0.0",
-    "gulp-typescript": "^5.0.1",
-    "jest": "^24.8.0",
+    "jest": "^24.9.0",
     "prettier": "^1.19.1",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.7.4"
+    "ts-jest": "^24.3.0",
+    "typescript": "^3.7.5"
   },
   "dependencies": {
     "ebnf": "^1.8.0"

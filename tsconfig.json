@@ -1,23 +1,18 @@
 {
   "files": [
-    "src/kintone-query-buffer-element.ts",
-    "src/kintone-query-buffer-interface.ts",
-    "src/kintone-query-buffer.ts",
-    "src/kintone-query-builder.ts",
-    "src/kintone-query-error.ts",
-    "src/kintone-query-expression.ts",
-    "src/kintone-query-parser.ts",
-    "src/parser/conditions-parser.ts",
-    "src/parser/limit-parser.ts",
-    "src/parser/offset-parser.ts",
-    "src/parser/order-by-parser.ts",
-    "src/parser/parser-interface.ts"
+    "src/main.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,
-    "target": "es2016",
     "esModuleInterop": true,
     "strict": true,
-    "module": "commonjs"
+    "declaration": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "alwaysStrict": true,
+    "target": "es2016",
+    "module": "commonjs",
+    "outDir": "dist"
   }
 }
