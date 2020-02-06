@@ -1,21 +1,9 @@
 import KintoneQueryBuffer from "./kintone-query-buffer";
-import KintoneQueryError from "./kintone-query-error";
-import KintoneQueryBufferElement from "./kintone-query-buffer-element";
+import KintoneQueryBufferElement, {
+  Operator,
+  ValueType
+} from "./kintone-query-buffer-element";
 import { ConjType } from "./kintone-query-buffer-interface";
-
-export type Operator =
-  | "="
-  | "<"
-  | ">"
-  | "<="
-  | ">="
-  | "!="
-  | "in"
-  | "not in"
-  | "like"
-  | "not like";
-
-type ValueType = string | number | (string | number)[];
 
 /**
  * This class builds logical condition clauses.
@@ -24,85 +12,10 @@ type ValueType = string | number | (string | number)[];
  * KintoneQueryExpression can be a argument of new KintoneQueryBuilder() to build  a nested query like '(A and B) or (C and D)'.
  */
 export default class KintoneQueryExpression {
-  protected buffer: KintoneQueryBuffer;
+  public buffer: KintoneQueryBuffer;
 
   constructor() {
     this.buffer = new KintoneQueryBuffer();
-  }
-
-  private static funcCheck(s: string): boolean {
-    const regExps = [
-      /LOGINUSER\(\)/,
-      /PRIMARY_ORGANIZATION\(\)/,
-      /NOW\(\)/,
-      /TODAY\(\)/,
-      /FROM_TODAY\(-?\d+,DAYS\)/,
-      /FROM_TODAY\(-?\d+,WEEKS\)/,
-      /FROM_TODAY\(-?\d+,MONTHS\)/,
-      /FROM_TODAY\(-?\d+,YEARS\)/,
-      /THIS_WEEK\(\)/,
-      /THIS_WEEK\(SUNDAY\)/,
-      /THIS_WEEK\(MONDAY\)/,
-      /THIS_WEEK\(TUESDAY\)/,
-      /THIS_WEEK\(WEDNESDAY\)/,
-      /THIS_WEEK\(THURSDAY\)/,
-      /THIS_WEEK\(FRIDAY\)/,
-      /THIS_WEEK\(SATURDAY\)/,
-      /LAST_WEEK\(\)/,
-      /LAST_WEEK\(SUNDAY\)/,
-      /LAST_WEEK\(MONDAY\)/,
-      /LAST_WEEK\(TUESDAY\)/,
-      /LAST_WEEK\(WEDNESDAY\)/,
-      /LAST_WEEK\(THURSDAY\)/,
-      /LAST_WEEK\(FRIDAY\)/,
-      /LAST_WEEK\(SATURDAY\)/,
-      /THIS_MONTH\(\)/,
-      /THIS_MONTH\(([1-9]|([1-2][0-9])|(3[0-1]))\)/,
-      /THIS_MONTH\(LAST\)/,
-      /LAST_MONTH\(\)/,
-      /LAST_MONTH\(([1-9]|([1-2][0-9])|(3[0-1]))\)/,
-      /LAST_MONTH\(LAST\)/,
-      /THIS_YEAR\(\)/
-    ];
-
-    return regExps.some(r => s.match(r));
-  }
-
-  private static escapeDoubleQuote(s: string): string {
-    return s.split('"').join('\\"');
-  }
-
-  private static valueToString(value: ValueType): string {
-    if (typeof value === "string") {
-      if (KintoneQueryExpression.funcCheck(value)) {
-        return value;
-      }
-      return '"' + KintoneQueryExpression.escapeDoubleQuote(value) + '"';
-    }
-    if (typeof value === "number") {
-      return "" + value;
-    }
-    return (
-      "(" + value.map(KintoneQueryExpression.valueToString).join(",") + ")"
-    );
-  }
-
-  private static generateConditionClause(
-    variable: string,
-    operator: Operator,
-    value: ValueType
-  ): string {
-    if (operator === "in" || operator === "not in") {
-      if (!Array.isArray(value)) {
-        throw new KintoneQueryError(
-          "Invalid value type: In case operator === 'in', value must be array, but given " +
-            typeof value
-        );
-      }
-    }
-    return `${variable} ${operator} ${KintoneQueryExpression.valueToString(
-      value
-    )}`;
   }
 
   private whereWithVarOpVal(
@@ -112,14 +25,7 @@ export default class KintoneQueryExpression {
     conj: ConjType
   ): this {
     this.buffer.append(
-      new KintoneQueryBufferElement(
-        KintoneQueryExpression.generateConditionClause(
-          variable,
-          operator,
-          value
-        ),
-        conj
-      )
+      new KintoneQueryBufferElement(variable, operator, value, conj)
     );
     return this;
   }
