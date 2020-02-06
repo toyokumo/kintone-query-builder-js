@@ -6,7 +6,7 @@ import KintoneQueryBufferInterface, {
  * internal expression of query
  */
 export default class KintoneQueryBuffer implements KintoneQueryBufferInterface {
-  private readonly buffer: KintoneQueryBufferInterface[];
+  public readonly buffer: KintoneQueryBufferInterface[];
 
   constructor(private conj: ConjType = null) {
     this.buffer = [];
