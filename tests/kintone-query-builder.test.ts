@@ -67,7 +67,11 @@ describe("Build Conditions", () => {
     ["time", "=", "NOW()", "time = NOW()"],
     ["time", "=", "TODAY()", "time = TODAY()"],
     ["time", "<", "FROM_TODAY(5,DAYS)", "time < FROM_TODAY(5,DAYS)"],
+    ["time", "<", "FROM_TODAY(5, DAYS)", "time < FROM_TODAY(5, DAYS)"], // allow space
+    ["time", "<", "FROM_TODAY(5,   DAYS)", "time < FROM_TODAY(5,   DAYS)"], // allow spaces
     ["time", "<", "FROM_TODAY(-15,DAYS)", "time < FROM_TODAY(-15,DAYS)"],
+    ["time", "<", "FROM_TODAY(-15, DAYS)", "time < FROM_TODAY(-15, DAYS)"], // allow space
+    ["time", "<", "FROM_TODAY(-15,   DAYS)", "time < FROM_TODAY(-15,   DAYS)"], // allow spaces
     ["time", "=", "THIS_WEEK(SUNDAY)", "time = THIS_WEEK(SUNDAY)"],
     ["time", "=", "THIS_WEEK()", "time = THIS_WEEK()"],
     ["time", "=", "LAST_WEEK(SUNDAY)", "time = LAST_WEEK(SUNDAY)"],
