@@ -1,6 +1,6 @@
 {
   "name": "kintone-query-builder",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "kintone query builder and parser",
   "main": "./dist/main.js",
   "files": [
