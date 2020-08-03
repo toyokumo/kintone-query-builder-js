@@ -1,3 +1,6 @@
+## 0.1.3
+bump vulnerable libraries. https://github.com/toyokumo/kintone-query-builder-js/pull/16
+
 ## 0.1.2
 bump vulnerable libraries. https://github.com/toyokumo/kintone-query-builder-js/pull/15
 
