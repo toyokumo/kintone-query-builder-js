@@ -37,7 +37,7 @@ integer         ::= '-'? ('0' | [1-9] [0-9]*)
 number          ::= integer ('.' [0-9]+)?
 string          ::= '"' (([#x20-#x21] | [#x23-#x5B] | [#x5D-#xFFFF]) | #x5C (#x22 | #x5C | #x2F | #x62 | #x66 | #x6E | #x72 | #x74 | #x75 HEXDIG HEXDIG HEXDIG HEXDIG))* '"'
 HEXDIG          ::= [a-fA-F0-9]
-function        ::= 'LOGINUSER()' | 'PRIMARY_ORGANIZATION()' | 'NOW()' | 'TODAY()' | 'FROM_TODAY(' integer ',' SPACES? DAY_SPAN_UNIT ')' | 'THIS_WEEK(' DAY_OF_WEEK? ')' | 'LAST_WEEK(' DAY_OF_WEEK? ')' | 'THIS_MONTH(' DAY_OF_MONTH? ')' | 'LAST_MONTH(' DAY_OF_MONTH? ')' | 'THIS_YEAR()'
+function        ::= 'LOGINUSER()' | 'PRIMARY_ORGANIZATION()' | 'NOW()' | 'TODAY()' | 'YESTERDAY()' | 'TOMORROW()' | 'FROM_TODAY(' integer ',' SPACES? DAY_SPAN_UNIT ')' | 'THIS_WEEK(' DAY_OF_WEEK? ')' | 'LAST_WEEK(' DAY_OF_WEEK? ')' | 'NEXT_WEEK(' DAY_OF_WEEK? ')' | 'THIS_MONTH(' DAY_OF_MONTH? ')' | 'LAST_MONTH(' DAY_OF_MONTH? ')' | 'NEXT_MONTH(' DAY_OF_MONTH? ')' | 'THIS_YEAR()' | 'LAST_YEAR()' | 'NEXT_YEAR()'
 
 DAY_SPAN_UNIT   ::= 'DAYS' | 'WEEKS' | 'MONTHS' | 'YEARS'
 DAY_OF_WEEK     ::= 'SUNDAY' | 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY'
