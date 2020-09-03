@@ -1,3 +1,7 @@
+## 0.1.4
+support newly added functions: `YESTERDAY`, `TOMORROW`, `NEXT_WEEK`, `NEXT_MONTH`, `LAST_YEAR`, `NEXT_YEAR`
+update detail(japanese): https://developer.cybozu.io/hc/ja/articles/900001575326
+
 ## 0.1.3
 bump vulnerable libraries. https://github.com/toyokumo/kintone-query-builder-js/pull/16
 
