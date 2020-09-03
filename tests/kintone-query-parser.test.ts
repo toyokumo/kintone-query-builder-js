@@ -53,18 +53,27 @@ describe("Parse Monadic Condition", () => {
     ["field=PRIMARY_ORGANIZATION()", "field = PRIMARY_ORGANIZATION()"],
     ["field=NOW()", "field = NOW()"],
     ["field=TODAY()", "field = TODAY()"],
+    ["field=YESTERDAY()", "field = YESTERDAY()"],
+    ["field=TOMORROW()", "field = TOMORROW()"],
     ["field=FROM_TODAY(-1,DAYS)", "field = FROM_TODAY(-1,DAYS)"],
     ["field=THIS_WEEK()", "field = THIS_WEEK()"],
     ["field=THIS_WEEK(MONDAY)", "field = THIS_WEEK(MONDAY)"],
     ["field=LAST_WEEK()", "field = LAST_WEEK()"],
     ["field=LAST_WEEK(MONDAY)", "field = LAST_WEEK(MONDAY)"],
+    ["field=NEXT_WEEK()", "field = NEXT_WEEK()"],
+    ["field=NEXT_WEEK(THURSDAY)", "field = NEXT_WEEK(THURSDAY)"],
     ["field=THIS_MONTH()", "field = THIS_MONTH()"],
     ["field=THIS_MONTH(1)", "field = THIS_MONTH(1)"],
     ["field=THIS_MONTH(LAST)", "field = THIS_MONTH(LAST)"],
     ["field=LAST_MONTH()", "field = LAST_MONTH()"],
     ["field=LAST_MONTH(1)", "field = LAST_MONTH(1)"],
     ["field=LAST_MONTH(LAST)", "field = LAST_MONTH(LAST)"],
-    ["field=THIS_YEAR()", "field = THIS_YEAR()"]
+    ["field=NEXT_MONTH()", "field = NEXT_MONTH()"],
+    ["field=NEXT_MONTH(31)", "field = NEXT_MONTH(31)"],
+    ["field=NEXT_MONTH(LAST)", "field = NEXT_MONTH(LAST)"],
+    ["field=THIS_YEAR()", "field = THIS_YEAR()"],
+    ["field=LAST_YEAR()", "field = LAST_YEAR()"],
+    ["field=NEXT_YEAR()", "field = NEXT_YEAR()"]
   ])("parse function-query", (query, expected) => {
     expect(parser.parse(query).build()).toEqual(expected);
   });
