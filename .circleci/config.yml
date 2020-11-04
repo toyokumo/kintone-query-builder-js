@@ -1,26 +1,60 @@
 version: 2
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:10
+
 jobs:
-  build:
-    working_directory: ~/kintone-query-builder-js
-    docker:
-      - image: circleci/node:10
+  test:
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - run:
-          name: install-npm
-          command: npm install
+          keys:
+          - dependency-cache-{{ checksum "package-lock.json" }}
+      - run: npm install
       - save_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: lint
           command: npm run lint
       - run:
-          name: test
+          name: Run tests
           command: npm test
       - run:
           name: code-coverage
           command: npm run-script testWithCoverage
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Publish package
+          command: npm publish
+
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - test:
+          filters: # required since `deploy` has tag filters AND requires `test`
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
