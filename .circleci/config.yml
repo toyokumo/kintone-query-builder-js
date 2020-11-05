@@ -29,6 +29,7 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
+      - run: exit 1
       - slack/notify:
           channel: CMTERENRJ
           event: fail
