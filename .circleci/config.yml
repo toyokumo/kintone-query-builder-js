@@ -1,4 +1,6 @@
-version: 2
+version: 2.1
+orbs:
+  slack: circleci/slack@4.1
 
 defaults: &defaults
   working_directory: ~/repo
@@ -27,6 +29,26 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
+      - slack/notify:
+          event: fail
+          template: basic_fail
+      - slack/notify:
+          event: pass
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Success :tada:",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
   deploy:
     <<: *defaults
     steps:
@@ -41,16 +63,24 @@ jobs:
       - run:
           name: Publish package
           command: npm publish
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
 workflows:
   version: 2
   test-deploy:
     jobs:
       - test:
+          context: slack
           filters: # required since `deploy` has tag filters AND requires `test`
             tags:
               only: /.*/
       - deploy:
+          context: slack
           requires:
             - test
           filters:
