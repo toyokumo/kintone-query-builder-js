@@ -42,7 +42,7 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "Success :tada:",
+                      "text": "kintone-query-builder-js test job passed :tada:",
                       "emoji": true
                     }
                   ]
