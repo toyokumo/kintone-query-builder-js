@@ -29,7 +29,6 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
-      - run: exit 1
       - slack/status
   deploy:
     <<: *defaults
