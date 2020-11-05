@@ -22,10 +22,7 @@ jobs:
           name: lint
           command: npm run lint
       - run:
-          name: Run tests
-          command: npm test
-      - run:
-          name: code-coverage
+          name: test with coverage
           command: npm run-script testWithCoverage
       - persist_to_workspace:
           root: ~/repo
