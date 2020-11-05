@@ -30,9 +30,11 @@ jobs:
           root: ~/repo
           paths: .
       - slack/notify:
+          channel: CMTERENRJ
           event: fail
           template: basic_fail
       - slack/notify:
+          channel: CMTERENRJ
           event: pass
           custom: |
             {
@@ -64,9 +66,11 @@ jobs:
           name: Publish package
           command: npm publish
       - slack/notify:
+          channel: CMTERENRJ
           event: fail
           template: basic_fail_1
       - slack/notify:
+          channel: CMTERENRJ
           event: pass
           template: success_tagged_deploy_1
 
