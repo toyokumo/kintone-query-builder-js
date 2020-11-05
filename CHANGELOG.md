@@ -1,3 +1,11 @@
+## 0.1.5
+fix broken deploy
+https://github.com/toyokumo/kintone-query-builder-js/pull/18#issue-492932583
+https://github.com/toyokumo/kintone-query-builder-js/pull/19
+
+Unexpected files were contained in the package before this vesion.
+
+
 ## 0.1.4
 support newly added functions: `YESTERDAY`, `TOMORROW`, `NEXT_WEEK`, `NEXT_MONTH`, `LAST_YEAR`, `NEXT_YEAR`
 update detail(japanese): https://developer.cybozu.io/hc/ja/articles/900001575326
