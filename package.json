@@ -11,9 +11,7 @@
     "test": "jest",
     "testWithCoverage": "jest --coverage",
     "lint": "eslint src tests --ext .ts",
-    "lint:fix": "eslint src tests --ext .ts --fix",
-    "prepublish": "rm -rf dist/ && npm run-script build",
-    "postpublish": "npm logout"
+    "lint:fix": "eslint src tests --ext .ts --fix"
   },
   "keywords": [
     "kintone"
