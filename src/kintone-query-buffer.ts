@@ -1,6 +1,7 @@
-import KintoneQueryBufferInterface, {
+import KintoneQueryBufferInterface, type {
   ConjType
 } from "./kintone-query-buffer-interface";
+
 
 /**
  * internal expression of query

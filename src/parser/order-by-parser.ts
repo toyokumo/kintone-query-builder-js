@@ -1,6 +1,6 @@
-import ParserInterface from "./parser-interface";
-import KintoneQueryBuilder from "../kintone-query-builder";
-import { IToken } from "ebnf";
+import type { IToken } from "ebnf";
+import type ParserInterface from "./parser-interface";
+import type KintoneQueryBuilder from "../kintone-query-builder";
 
 export default class OrderByParser implements ParserInterface {
   apply(builder: KintoneQueryBuilder, token: IToken): void {

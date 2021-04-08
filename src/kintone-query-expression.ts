@@ -1,7 +1,7 @@
 import KintoneQueryBuffer from "./kintone-query-buffer";
 import KintoneQueryError from "./kintone-query-error";
 import KintoneQueryBufferElement from "./kintone-query-buffer-element";
-import { ConjType } from "./kintone-query-buffer-interface";
+import type { ConjType } from "./kintone-query-buffer-interface";
 
 export type Operator =
   | "="
@@ -92,13 +92,13 @@ export default class KintoneQueryExpression {
       if (KintoneQueryExpression.funcCheck(value)) {
         return value;
       }
-      return '"' + KintoneQueryExpression.escapeDoubleQuote(value) + '"';
+      return `"${  KintoneQueryExpression.escapeDoubleQuote(value)  }"`;
     }
     if (typeof value === "number") {
-      return "" + value;
+      return `${  value}`;
     }
     return (
-      "(" + value.map(KintoneQueryExpression.valueToString).join(",") + ")"
+      `(${  value.map(KintoneQueryExpression.valueToString).join(",")  })`
     );
   }
 
@@ -110,8 +110,8 @@ export default class KintoneQueryExpression {
     if (operator === "in" || operator === "not in") {
       if (!Array.isArray(value)) {
         throw new KintoneQueryError(
-          "Invalid value type: In case operator === 'in', value must be array, but given " +
-            typeof value
+          `Invalid value type: In case operator === 'in', value must be array, but given ${ 
+            typeof value}`
         );
       }
     }
@@ -152,7 +152,9 @@ export default class KintoneQueryExpression {
   }
 
   public where(varOrExpr: KintoneQueryExpression): this;
+
   public where(varOrExpr: string, operator: Operator, value: ValueType): this;
+
   /**
    * Adds query condition.
    *
@@ -173,11 +175,13 @@ export default class KintoneQueryExpression {
   }
 
   public andWhere(varOrExpr: KintoneQueryExpression): this;
+
   public andWhere(
     varOrExpr: string,
     operator: Operator,
     value: ValueType
   ): this;
+
   /**
    * Adds query condition.
    * The condition is connected to existing conditions by "and".
@@ -199,7 +203,9 @@ export default class KintoneQueryExpression {
   }
 
   public orWhere(varOrExpr: KintoneQueryExpression): this;
+
   public orWhere(varOrExpr: string, operator: Operator, value: ValueType): this;
+
   /**
    * Adds query condition.
    * The condition is connected to existing conditions by "or".

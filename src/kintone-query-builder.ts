@@ -6,11 +6,15 @@ import KintoneQueryExpression from "./kintone-query-expression";
  */
 export default class KintoneQueryBuilder extends KintoneQueryExpression {
   private orderClause = "";
+
   private limitClause = "";
+
   private offsetClause = "";
 
   public orderBy(variable: null): this;
+
   public orderBy(variable: string, order?: "asc" | "desc"): this;
+
   /**
    * Adds an "order by" clause.
    * Calls this function twice or more for multi field "order by".
