@@ -48,10 +48,10 @@ const elementParsers = new Map<string, ParserInterface>([
   ["conditions", new ConditionsParser()],
   ["order_by_clause", new OrderByParser()],
   ["limit_clause", new LimitParser()],
-  ["offset_clause", new OffsetParser()]
+  ["offset_clause", new OffsetParser()],
 ]);
 
-const queryParser = new Grammars.W3C.Parser(queryBnf, null);
+const queryParser = new Grammars.W3C.Parser(queryBnf);
 
 export class KintoneQueryParser {
   /**
@@ -72,10 +72,9 @@ export class KintoneQueryParser {
       throw new KintoneQueryError(ast.errors[0].message, ast);
     }
     const builder = new KintoneQueryBuilder();
-    for (const child of ast.children) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      elementParsers.get(child.type)!.apply(builder, child);
-    }
+    ast.children.forEach((child) =>
+      elementParsers.get(child.type)?.apply(builder, child)
+    );
     return builder;
   }
 }

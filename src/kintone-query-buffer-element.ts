@@ -8,7 +8,7 @@ export class KintoneQueryBufferElement implements KintoneQueryBufferInterface {
    * @param data - minimum element ('x < 10' or 'y = 10' or 'name like "banana"')
    * @param conj
    */
-  constructor(private data: string, private conj: ConjType) {}
+  constructor(private data: string, private conj: ConjType) {} // eslint-disable-line no-useless-constructor
 
   public getConj(): ConjType {
     return this.conj;

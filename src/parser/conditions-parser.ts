@@ -27,23 +27,22 @@ export class ConditionsParser implements ParserInterface {
         return this.parseInCondition(token);
       case "like_condition":
         return this.parseLikeCondition(token);
+      default:
+        throw new KintoneQueryError(`token type ${token.type} is invalid`);
     }
-    throw new KintoneQueryError(`token type ${token.type} is invalid`);
   }
 
   private parseConditions(token: IToken): KintoneQueryExpression {
     const expr = new KintoneQueryExpression();
-    for (const child of token.children) {
-      expr.orWhere(this.parse(child));
-    }
+    token.children.forEach((child) => expr.orWhere(this.parse(child)));
     return expr;
   }
 
   private parseAndConditions(token: IToken): KintoneQueryExpression {
     const expr = new KintoneQueryExpression();
-    for (const child of token.children) {
+    token.children.forEach((child) => {
       expr.andWhere(this.parse(child));
-    }
+    });
     return expr;
   }
 
@@ -69,8 +68,9 @@ export class ConditionsParser implements ParserInterface {
         return parseFloat(token.children[0].text);
       case "string":
         return this.parseString(token.children[0]);
+      default:
+        return token.children[0].text;
     }
-    return token.children[0].text;
   }
 
   private parseCondition(token: IToken): KintoneQueryExpression {
@@ -83,7 +83,7 @@ export class ConditionsParser implements ParserInterface {
     const operator = token.children[1].text
       .trim()
       .replace(/ {2,}/, " ") as Operator;
-    const values = token.children[2].children.map(t => this.parseValue(t));
+    const values = token.children[2].children.map((t) => this.parseValue(t));
     return expr.where(field, operator, values);
   }
 

@@ -83,7 +83,7 @@ describe("Build Conditions", () => {
     ["time", "=", "LAST_MONTH(LAST)", "time = LAST_MONTH(LAST)"],
     ["time", "=", "LAST_MONTH(1)", "time = LAST_MONTH(1)"],
     ["time", "=", "LAST_MONTH(81)", 'time = "LAST_MONTH(81)"'],
-    ["time", "=", "THIS_YEAR()", "time = THIS_YEAR()"]
+    ["time", "=", "THIS_YEAR()", "time = THIS_YEAR()"],
   ])("build condition with function", (a, b, c, expected) => {
     const query = new KintoneQueryBuilder().where(a, b as Operator, c).build();
     expect(query).toEqual(expected);
@@ -125,10 +125,7 @@ describe("Build Limit", () => {
   });
 
   it("clear limit", () => {
-    const query = new KintoneQueryBuilder()
-      .limit(10)
-      .limit(null)
-      .build();
+    const query = new KintoneQueryBuilder().limit(10).limit(null).build();
     expect(query).toEqual("");
   });
 
@@ -148,10 +145,7 @@ describe("Build Offset", () => {
   });
 
   it("clear offset", () => {
-    const query = new KintoneQueryBuilder()
-      .offset(30)
-      .offset(null)
-      .build();
+    const query = new KintoneQueryBuilder().offset(30).offset(null).build();
     expect(query).toEqual("");
   });
 

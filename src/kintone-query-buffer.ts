@@ -34,19 +34,18 @@ export class KintoneQueryBuffer implements KintoneQueryBufferInterface {
   }
 
   public toQuery(hasParent = false): string {
-    let query = "";
-
-    for (let i = 0; i < this.buffer.length; i++) {
-      const subQuery = this.buffer[i].toQuery(true);
-      if (subQuery === "()" || subQuery === "") {
-        continue;
-      }
-      if (i === 0) {
-        query += subQuery;
-      } else {
-        query += ` ${this.buffer[i].getConj()} ${subQuery}`;
-      }
-    }
+    const query = this.buffer
+      .filter((b) => {
+        const subQuery = b.toQuery(true);
+        return subQuery !== "()" && subQuery !== "";
+      })
+      .reduce((prev, b) => {
+        const subQuery = b.toQuery(true);
+        if (prev === "") {
+          return subQuery;
+        }
+        return `${prev} ${b.getConj()} ${subQuery}`;
+      }, "");
     if (query === "") {
       return "";
     }

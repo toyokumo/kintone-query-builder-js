@@ -4,10 +4,8 @@ import type { KintoneQueryBuilder } from "../kintone-query-builder";
 
 export class OffsetParser implements ParserInterface {
   apply(builder: KintoneQueryBuilder, token: IToken): void {
-    for (const child of token.children) {
-      if (child.type === "integer") {
-        builder.offset(parseInt(child.text));
-      }
-    }
+    token.children
+      .filter((child) => child.type === "integer")
+      .forEach((child) => builder.offset(parseInt(child.text, 10)));
   }
 }
