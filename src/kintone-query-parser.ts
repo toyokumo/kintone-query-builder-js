@@ -1,11 +1,11 @@
-import { Grammars } from "ebnf";
-import { KintoneQueryBuilder } from "./kintone-query-builder";
-import { ConditionsParser } from "./parser/conditions-parser";
-import { OrderByParser } from "./parser/order-by-parser";
-import { LimitParser } from "./parser/limit-parser";
-import { OffsetParser } from "./parser/offset-parser";
-import type { ParserInterface } from "./parser/parser-interface";
-import { KintoneQueryError } from "./kintone-query-error";
+import { Grammars } from 'ebnf';
+import { KintoneQueryBuilder } from './kintone-query-builder';
+import { ConditionsParser } from './parser/conditions-parser';
+import { OrderByParser } from './parser/order-by-parser';
+import { LimitParser } from './parser/limit-parser';
+import { OffsetParser } from './parser/offset-parser';
+import type { ParserInterface } from './parser/parser-interface';
+import { KintoneQueryError } from './kintone-query-error';
 
 const queryBnf = `query           ::= SPACES? conditions? order_by_clause? limit_clause? offset_clause? SPACES?
 
@@ -45,10 +45,10 @@ DAY_OF_MONTH    ::= [1-2] [0-9] | '3' [0-1] | [1-9] | 'LAST'
 `;
 
 const elementParsers = new Map<string, ParserInterface>([
-  ["conditions", new ConditionsParser()],
-  ["order_by_clause", new OrderByParser()],
-  ["limit_clause", new LimitParser()],
-  ["offset_clause", new OffsetParser()],
+  ['conditions', new ConditionsParser()],
+  ['order_by_clause', new OrderByParser()],
+  ['limit_clause', new LimitParser()],
+  ['offset_clause', new OffsetParser()],
 ]);
 
 const queryParser = new Grammars.W3C.Parser(queryBnf);
@@ -61,7 +61,7 @@ export class KintoneQueryParser {
    * @param query
    */
   public parse(query: string): KintoneQueryBuilder {
-    if (query === "") {
+    if (query === '') {
       return new KintoneQueryBuilder();
     }
     const ast = queryParser.getAST(query);
@@ -72,9 +72,7 @@ export class KintoneQueryParser {
       throw new KintoneQueryError(ast.errors[0].message, ast);
     }
     const builder = new KintoneQueryBuilder();
-    ast.children.forEach((child) =>
-      elementParsers.get(child.type)?.apply(builder, child)
-    );
+    ast.children.forEach((child) => elementParsers.get(child.type)?.apply(builder, child));
     return builder;
   }
 }

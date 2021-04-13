@@ -1,7 +1,4 @@
-import type {
-  KintoneQueryBufferInterface,
-  ConjType,
-} from "./kintone-query-buffer-interface";
+import type { KintoneQueryBufferInterface, ConjType } from './kintone-query-buffer-interface';
 
 /**
  * internal expression of query
@@ -37,17 +34,17 @@ export class KintoneQueryBuffer implements KintoneQueryBufferInterface {
     const query = this.buffer
       .filter((b) => {
         const subQuery = b.toQuery(true);
-        return subQuery !== "()" && subQuery !== "";
+        return subQuery !== '()' && subQuery !== '';
       })
       .reduce((prev, b) => {
         const subQuery = b.toQuery(true);
-        if (prev === "") {
+        if (prev === '') {
           return subQuery;
         }
         return `${prev} ${b.getConj()} ${subQuery}`;
-      }, "");
-    if (query === "") {
-      return "";
+      }, '');
+    if (query === '') {
+      return '';
     }
     if (hasParent && this.buffer.length > 1) {
       return `(${query})`;

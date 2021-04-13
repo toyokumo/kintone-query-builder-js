@@ -1,7 +1,4 @@
-import type {
-  KintoneQueryBufferInterface,
-  ConjType,
-} from "./kintone-query-buffer-interface";
+import type { KintoneQueryBufferInterface, ConjType } from './kintone-query-buffer-interface';
 
 export class KintoneQueryBufferElement implements KintoneQueryBufferInterface {
   /**

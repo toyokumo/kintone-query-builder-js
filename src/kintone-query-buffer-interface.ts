@@ -1,4 +1,4 @@
-export type ConjType = "and" | "or" | null;
+export type ConjType = 'and' | 'or' | null;
 
 export interface KintoneQueryBufferInterface {
   getConj(): ConjType;

@@ -1,4 +1,4 @@
-import type { IToken } from "ebnf";
+import type { IToken } from 'ebnf';
 
 export class KintoneQueryError extends Error {
   constructor(message?: string, public ast?: IToken) {
