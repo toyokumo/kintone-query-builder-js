@@ -1,11 +1,11 @@
 import { Grammars } from "ebnf";
-import KintoneQueryBuilder from "./kintone-query-builder";
-import ConditionsParser from "./parser/conditions-parser";
-import OrderByParser from "./parser/order-by-parser";
-import LimitParser from "./parser/limit-parser";
-import OffsetParser from "./parser/offset-parser";
-import type ParserInterface from "./parser/parser-interface";
-import KintoneQueryError from "./kintone-query-error";
+import { KintoneQueryBuilder } from "./kintone-query-builder";
+import { ConditionsParser } from "./parser/conditions-parser";
+import { OrderByParser } from "./parser/order-by-parser";
+import { LimitParser } from "./parser/limit-parser";
+import { OffsetParser } from "./parser/offset-parser";
+import type { ParserInterface } from "./parser/parser-interface";
+import { KintoneQueryError } from "./kintone-query-error";
 
 const queryBnf = `query           ::= SPACES? conditions? order_by_clause? limit_clause? offset_clause? SPACES?
 
@@ -53,7 +53,7 @@ const elementParsers = new Map<string, ParserInterface>([
 
 const queryParser = new Grammars.W3C.Parser(queryBnf, null);
 
-export default class KintoneQueryParser {
+export class KintoneQueryParser {
   /**
    * Parses kintone query string.
    * Returns query builder that returns the same query when call `build()`.

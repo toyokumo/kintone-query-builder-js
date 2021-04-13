@@ -1,4 +1,4 @@
-import KintoneQueryParser from "../src/kintone-query-parser";
+import { KintoneQueryParser } from "../src/kintone-query-parser";
 
 describe("Parse Monadic Condition", () => {
   const parser = new KintoneQueryParser();

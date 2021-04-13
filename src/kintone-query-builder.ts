@@ -1,10 +1,10 @@
-import KintoneQueryExpression from "./kintone-query-expression";
+import { KintoneQueryExpression } from "./kintone-query-expression";
 
 /**
  * This class can do anything KintoneQueryExpression can do.
  * In addition, you can add 'offset' 'limit' 'order by' with this class.
  */
-export default class KintoneQueryBuilder extends KintoneQueryExpression {
+export class KintoneQueryBuilder extends KintoneQueryExpression {
   private orderClause = "";
 
   private limitClause = "";
@@ -78,9 +78,9 @@ export default class KintoneQueryBuilder extends KintoneQueryExpression {
       this.buffer.toQuery(),
       this.orderClause,
       this.limitClause,
-      this.offsetClause
+      this.offsetClause,
     ]
-      .filter(c => c !== "")
+      .filter((c) => c !== "")
       .join(" ");
   }
 }

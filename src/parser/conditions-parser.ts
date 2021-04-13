@@ -1,11 +1,11 @@
 import type { IToken } from "ebnf";
-import type ParserInterface from "./parser-interface";
-import type KintoneQueryBuilder from "../kintone-query-builder";
+import type { ParserInterface } from "./parser-interface";
+import type { KintoneQueryBuilder } from "../kintone-query-builder";
 import type { Operator } from "../kintone-query-expression";
-import KintoneQueryExpression from "../kintone-query-expression";
-import KintoneQueryError from "../kintone-query-error";
+import { KintoneQueryExpression } from "../kintone-query-expression";
+import { KintoneQueryError } from "../kintone-query-error";
 
-export default class ConditionsParser implements ParserInterface {
+export class ConditionsParser implements ParserInterface {
   apply(builder: KintoneQueryBuilder, token: IToken): void {
     const expr = this.parseConditions(token);
     builder.orWhere(expr);

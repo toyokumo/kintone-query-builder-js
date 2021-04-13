@@ -1,6 +1,6 @@
-import KintoneQueryBuffer from "./kintone-query-buffer";
-import KintoneQueryError from "./kintone-query-error";
-import KintoneQueryBufferElement from "./kintone-query-buffer-element";
+import { KintoneQueryBuffer } from "./kintone-query-buffer";
+import { KintoneQueryError } from "./kintone-query-error";
+import { KintoneQueryBufferElement } from "./kintone-query-buffer-element";
 import type { ConjType } from "./kintone-query-buffer-interface";
 
 export type Operator =
@@ -23,7 +23,7 @@ type ValueType = string | number | (string | number)[];
  * In that case, you should use KintoneQueryBuilder.
  * KintoneQueryExpression can be a argument of new KintoneQueryBuilder() to build  a nested query like '(A and B) or (C and D)'.
  */
-export default class KintoneQueryExpression {
+export class KintoneQueryExpression {
   protected buffer: KintoneQueryBuffer;
 
   constructor() {
@@ -77,10 +77,10 @@ export default class KintoneQueryExpression {
       /NEXT_MONTH\(LAST\)/,
       /THIS_YEAR\(\)/,
       /LAST_YEAR\(\)/,
-      /NEXT_YEAR\(\)/
+      /NEXT_YEAR\(\)/,
     ];
 
-    return regExps.some(r => s.match(r));
+    return regExps.some((r) => s.match(r));
   }
 
   private static escapeDoubleQuote(s: string): string {
@@ -92,14 +92,12 @@ export default class KintoneQueryExpression {
       if (KintoneQueryExpression.funcCheck(value)) {
         return value;
       }
-      return `"${  KintoneQueryExpression.escapeDoubleQuote(value)  }"`;
+      return `"${KintoneQueryExpression.escapeDoubleQuote(value)}"`;
     }
     if (typeof value === "number") {
-      return `${  value}`;
+      return `${value}`;
     }
-    return (
-      `(${  value.map(KintoneQueryExpression.valueToString).join(",")  })`
-    );
+    return `(${value.map(KintoneQueryExpression.valueToString).join(",")})`;
   }
 
   private static generateConditionClause(
@@ -110,8 +108,7 @@ export default class KintoneQueryExpression {
     if (operator === "in" || operator === "not in") {
       if (!Array.isArray(value)) {
         throw new KintoneQueryError(
-          `Invalid value type: In case operator === 'in', value must be array, but given ${ 
-            typeof value}`
+          `Invalid value type: In case operator === 'in', value must be array, but given ${typeof value}`
         );
       }
     }

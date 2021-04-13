@@ -1,12 +1,12 @@
-import KintoneQueryBufferInterface, type {
-  ConjType
+import type {
+  KintoneQueryBufferInterface,
+  ConjType,
 } from "./kintone-query-buffer-interface";
-
 
 /**
  * internal expression of query
  */
-export default class KintoneQueryBuffer implements KintoneQueryBufferInterface {
+export class KintoneQueryBuffer implements KintoneQueryBufferInterface {
   private readonly buffer: KintoneQueryBufferInterface[];
 
   constructor(private conj: ConjType = null) {

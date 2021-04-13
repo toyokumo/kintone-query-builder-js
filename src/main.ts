@@ -1,3 +1,3 @@
-export { default as KintoneQueryBuilder } from "./kintone-query-builder";
-export { default as KintoneQueryParser } from "./kintone-query-parser";
-export { default as KintoneQueryExpression } from "./kintone-query-expression";
+export { KintoneQueryBuilder } from "./kintone-query-builder";
+export { KintoneQueryParser } from "./kintone-query-parser";
+export { KintoneQueryExpression } from "./kintone-query-expression";

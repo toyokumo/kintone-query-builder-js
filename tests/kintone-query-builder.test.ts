@@ -1,8 +1,6 @@
-import KintoneQueryBuilder from "../src/kintone-query-builder";
-import type {
-  Operator
-} from "../src/kintone-query-expression";
-import KintoneQueryExpression from "../src/kintone-query-expression";
+import { KintoneQueryBuilder } from "../src/kintone-query-builder";
+import type { Operator } from "../src/kintone-query-expression";
+import { KintoneQueryExpression } from "../src/kintone-query-expression";
 
 describe("Build Conditions", () => {
   it("build by where", () => {

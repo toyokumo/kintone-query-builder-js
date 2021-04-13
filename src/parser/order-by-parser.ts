@@ -1,8 +1,8 @@
 import type { IToken } from "ebnf";
-import type ParserInterface from "./parser-interface";
-import type KintoneQueryBuilder from "../kintone-query-builder";
+import type { ParserInterface } from "./parser-interface";
+import type { KintoneQueryBuilder } from "../kintone-query-builder";
 
-export default class OrderByParser implements ParserInterface {
+export class OrderByParser implements ParserInterface {
   apply(builder: KintoneQueryBuilder, token: IToken): void {
     for (const child of token.children) {
       this.applySorter(builder, child);
