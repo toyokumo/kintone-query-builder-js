@@ -1,19 +1,9 @@
-import KintoneQueryBuffer from "./kintone-query-buffer";
-import KintoneQueryError from "./kintone-query-error";
-import KintoneQueryBufferElement from "./kintone-query-buffer-element";
-import { ConjType } from "./kintone-query-buffer-interface";
+import { KintoneQueryBuffer } from './kintone-query-buffer';
+import { KintoneQueryError } from './kintone-query-error';
+import { KintoneQueryBufferElement } from './kintone-query-buffer-element';
+import type { ConjType } from './kintone-query-buffer-interface';
 
-export type Operator =
-  | "="
-  | "<"
-  | ">"
-  | "<="
-  | ">="
-  | "!="
-  | "in"
-  | "not in"
-  | "like"
-  | "not like";
+export type Operator = '=' | '<' | '>' | '<=' | '>=' | '!=' | 'in' | 'not in' | 'like' | 'not like';
 
 type ValueType = string | number | (string | number)[];
 
@@ -23,7 +13,7 @@ type ValueType = string | number | (string | number)[];
  * In that case, you should use KintoneQueryBuilder.
  * KintoneQueryExpression can be a argument of new KintoneQueryBuilder() to build  a nested query like '(A and B) or (C and D)'.
  */
-export default class KintoneQueryExpression {
+export class KintoneQueryExpression {
   protected buffer: KintoneQueryBuffer;
 
   constructor() {
@@ -77,10 +67,10 @@ export default class KintoneQueryExpression {
       /NEXT_MONTH\(LAST\)/,
       /THIS_YEAR\(\)/,
       /LAST_YEAR\(\)/,
-      /NEXT_YEAR\(\)/
+      /NEXT_YEAR\(\)/,
     ];
 
-    return regExps.some(r => s.match(r));
+    return regExps.some((r) => s.match(r));
   }
 
   private static escapeDoubleQuote(s: string): string {
@@ -88,61 +78,37 @@ export default class KintoneQueryExpression {
   }
 
   private static valueToString(value: ValueType): string {
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       if (KintoneQueryExpression.funcCheck(value)) {
         return value;
       }
-      return '"' + KintoneQueryExpression.escapeDoubleQuote(value) + '"';
+      return `"${KintoneQueryExpression.escapeDoubleQuote(value)}"`;
     }
-    if (typeof value === "number") {
-      return "" + value;
+    if (typeof value === 'number') {
+      return `${value}`;
     }
-    return (
-      "(" + value.map(KintoneQueryExpression.valueToString).join(",") + ")"
-    );
+    return `(${value.map(KintoneQueryExpression.valueToString).join(',')})`;
   }
 
-  private static generateConditionClause(
-    variable: string,
-    operator: Operator,
-    value: ValueType
-  ): string {
-    if (operator === "in" || operator === "not in") {
+  private static generateConditionClause(variable: string, operator: Operator, value: ValueType): string {
+    if (operator === 'in' || operator === 'not in') {
       if (!Array.isArray(value)) {
         throw new KintoneQueryError(
-          "Invalid value type: In case operator === 'in', value must be array, but given " +
-            typeof value
+          `Invalid value type: In case operator === 'in', value must be array, but given ${typeof value}`,
         );
       }
     }
-    return `${variable} ${operator} ${KintoneQueryExpression.valueToString(
-      value
-    )}`;
+    return `${variable} ${operator} ${KintoneQueryExpression.valueToString(value)}`;
   }
 
-  private whereWithVarOpVal(
-    variable: string,
-    operator: Operator,
-    value: ValueType,
-    conj: ConjType
-  ): this {
+  private whereWithVarOpVal(variable: string, operator: Operator, value: ValueType, conj: ConjType): this {
     this.buffer.append(
-      new KintoneQueryBufferElement(
-        KintoneQueryExpression.generateConditionClause(
-          variable,
-          operator,
-          value
-        ),
-        conj
-      )
+      new KintoneQueryBufferElement(KintoneQueryExpression.generateConditionClause(variable, operator, value), conj),
     );
     return this;
   }
 
-  private whereWithExpr(
-    expression: KintoneQueryExpression,
-    conj: ConjType
-  ): this {
+  private whereWithExpr(expression: KintoneQueryExpression, conj: ConjType): this {
     if (expression.buffer.isEmpty()) {
       return this;
     }
@@ -152,7 +118,9 @@ export default class KintoneQueryExpression {
   }
 
   public where(varOrExpr: KintoneQueryExpression): this;
+
   public where(varOrExpr: string, operator: Operator, value: ValueType): this;
+
   /**
    * Adds query condition.
    *
@@ -160,11 +128,7 @@ export default class KintoneQueryExpression {
    * @param operator
    * @param value
    */
-  public where(
-    varOrExpr: string | KintoneQueryExpression,
-    operator?: Operator,
-    value?: ValueType
-  ): this {
+  public where(varOrExpr: string | KintoneQueryExpression, operator?: Operator, value?: ValueType): this {
     if (varOrExpr instanceof KintoneQueryExpression) {
       return this.andWhere(varOrExpr);
     }
@@ -173,11 +137,9 @@ export default class KintoneQueryExpression {
   }
 
   public andWhere(varOrExpr: KintoneQueryExpression): this;
-  public andWhere(
-    varOrExpr: string,
-    operator: Operator,
-    value: ValueType
-  ): this;
+
+  public andWhere(varOrExpr: string, operator: Operator, value: ValueType): this;
+
   /**
    * Adds query condition.
    * The condition is connected to existing conditions by "and".
@@ -186,20 +148,18 @@ export default class KintoneQueryExpression {
    * @param operator
    * @param value
    */
-  public andWhere(
-    varOrExpr: string | KintoneQueryExpression,
-    operator?: Operator,
-    value?: ValueType
-  ): this {
+  public andWhere(varOrExpr: string | KintoneQueryExpression, operator?: Operator, value?: ValueType): this {
     if (varOrExpr instanceof KintoneQueryExpression) {
-      return this.whereWithExpr(varOrExpr, "and");
+      return this.whereWithExpr(varOrExpr, 'and');
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.whereWithVarOpVal(varOrExpr, operator!, value!, "and");
+    return this.whereWithVarOpVal(varOrExpr, operator!, value!, 'and');
   }
 
   public orWhere(varOrExpr: KintoneQueryExpression): this;
+
   public orWhere(varOrExpr: string, operator: Operator, value: ValueType): this;
+
   /**
    * Adds query condition.
    * The condition is connected to existing conditions by "or".
@@ -208,15 +168,11 @@ export default class KintoneQueryExpression {
    * @param operator
    * @param value
    */
-  public orWhere(
-    varOrExpr: string | KintoneQueryExpression,
-    operator?: Operator,
-    value?: ValueType
-  ): this {
+  public orWhere(varOrExpr: string | KintoneQueryExpression, operator?: Operator, value?: ValueType): this {
     if (varOrExpr instanceof KintoneQueryExpression) {
-      return this.whereWithExpr(varOrExpr, "or");
+      return this.whereWithExpr(varOrExpr, 'or');
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.whereWithVarOpVal(varOrExpr, operator!, value!, "or");
+    return this.whereWithVarOpVal(varOrExpr, operator!, value!, 'or');
   }
 }

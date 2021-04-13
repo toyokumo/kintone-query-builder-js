@@ -1,10 +1,11 @@
-import ParserInterface from "./parser-interface";
-import KintoneQueryBuilder from "../kintone-query-builder";
-import { IToken } from "ebnf";
-import KintoneQueryExpression, { Operator } from "../kintone-query-expression";
-import KintoneQueryError from "../kintone-query-error";
+import type { IToken } from 'ebnf';
+import type { ParserInterface } from './parser-interface';
+import type { KintoneQueryBuilder } from '../kintone-query-builder';
+import type { Operator } from '../kintone-query-expression';
+import { KintoneQueryExpression } from '../kintone-query-expression';
+import { KintoneQueryError } from '../kintone-query-error';
 
-export default class ConditionsParser implements ParserInterface {
+export class ConditionsParser implements ParserInterface {
   apply(builder: KintoneQueryBuilder, token: IToken): void {
     const expr = this.parseConditions(token);
     builder.orWhere(expr);
@@ -12,37 +13,36 @@ export default class ConditionsParser implements ParserInterface {
 
   private parse(token: IToken): KintoneQueryExpression {
     switch (token.type) {
-      case "conditions":
+      case 'conditions':
         return this.parseConditions(token);
-      case "condition":
+      case 'condition':
         return this.parseCondition(token);
-      case "and_conditions":
+      case 'and_conditions':
         return this.parseAndConditions(token);
-      case "parenethesized":
+      case 'parenethesized':
         return this.parseParenethesized(token);
-      case "comp_condition":
+      case 'comp_condition':
         return this.parseCompCondition(token);
-      case "in_condition":
+      case 'in_condition':
         return this.parseInCondition(token);
-      case "like_condition":
+      case 'like_condition':
         return this.parseLikeCondition(token);
+      default:
+        throw new KintoneQueryError(`token type ${token.type} is invalid`);
     }
-    throw new KintoneQueryError(`token type ${token.type} is invalid`);
   }
 
   private parseConditions(token: IToken): KintoneQueryExpression {
     const expr = new KintoneQueryExpression();
-    for (const child of token.children) {
-      expr.orWhere(this.parse(child));
-    }
+    token.children.forEach((child) => expr.orWhere(this.parse(child)));
     return expr;
   }
 
   private parseAndConditions(token: IToken): KintoneQueryExpression {
     const expr = new KintoneQueryExpression();
-    for (const child of token.children) {
+    token.children.forEach((child) => {
       expr.andWhere(this.parse(child));
-    }
+    });
     return expr;
   }
 
@@ -64,12 +64,13 @@ export default class ConditionsParser implements ParserInterface {
 
   private parseValue(token: IToken): number | string {
     switch (token.children[0].type) {
-      case "number":
+      case 'number':
         return parseFloat(token.children[0].text);
-      case "string":
+      case 'string':
         return this.parseString(token.children[0]);
+      default:
+        return token.children[0].text;
     }
-    return token.children[0].text;
   }
 
   private parseCondition(token: IToken): KintoneQueryExpression {
@@ -79,19 +80,15 @@ export default class ConditionsParser implements ParserInterface {
   private parseInCondition(token: IToken): KintoneQueryExpression {
     const expr = new KintoneQueryExpression();
     const field = token.children[0].text;
-    const operator = token.children[1].text
-      .trim()
-      .replace(/ {2,}/, " ") as Operator;
-    const values = token.children[2].children.map(t => this.parseValue(t));
+    const operator = token.children[1].text.trim().replace(/ {2,}/, ' ') as Operator;
+    const values = token.children[2].children.map((t) => this.parseValue(t));
     return expr.where(field, operator, values);
   }
 
   private parseLikeCondition(token: IToken): KintoneQueryExpression {
     const expr = new KintoneQueryExpression();
     const field = token.children[0].text;
-    const operator = token.children[1].text
-      .trim()
-      .replace(/ {2,}/, " ") as Operator;
+    const operator = token.children[1].text.trim().replace(/ {2,}/, ' ') as Operator;
     const string = this.parseString(token.children[2]);
     expr.where(field, operator, string);
     return expr;

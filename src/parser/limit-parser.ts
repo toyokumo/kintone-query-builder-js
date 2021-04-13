@@ -1,13 +1,11 @@
-import ParserInterface from "./parser-interface";
-import KintoneQueryBuilder from "../kintone-query-builder";
-import { IToken } from "ebnf";
+import type { IToken } from 'ebnf';
+import type { ParserInterface } from './parser-interface';
+import type { KintoneQueryBuilder } from '../kintone-query-builder';
 
-export default class LimitParser implements ParserInterface {
+export class LimitParser implements ParserInterface {
   apply(builder: KintoneQueryBuilder, token: IToken): void {
-    for (const child of token.children) {
-      if (child.type === "integer") {
-        builder.limit(parseInt(child.text));
-      }
-    }
+    token.children
+      .filter((child) => child.type === 'integer')
+      .forEach((child) => builder.limit(parseInt(child.text, 10)));
   }
 }
