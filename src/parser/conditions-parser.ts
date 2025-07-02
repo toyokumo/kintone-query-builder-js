@@ -27,6 +27,8 @@ export class ConditionsParser implements ParserInterface {
         return this.parseInCondition(token);
       case 'like_condition':
         return this.parseLikeCondition(token);
+      case 'is_condition':
+        return this.parseIsCondition(token);
       default:
         throw new KintoneQueryError(`token type ${token.type} is invalid`);
     }
@@ -96,5 +98,13 @@ export class ConditionsParser implements ParserInterface {
 
   private parseParenethesized(token: IToken): KintoneQueryExpression {
     return this.parse(token.children[0]);
+  }
+
+  private parseIsCondition(token: IToken): KintoneQueryExpression {
+    const expr = new KintoneQueryExpression();
+    const field = token.children[0].text;
+    const operator = token.children[1].text.trim().replace(/ {2,}/g, ' ') as Operator;
+    const value = token.children[2].text;
+    return expr.where(field, operator, value);
   }
 }
