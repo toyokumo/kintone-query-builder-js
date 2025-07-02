@@ -1,3 +1,6 @@
+## 0.1.6
+support `is` operator by @shutakano. (#37)
+
 ## 0.1.5
 fix broken deploy
 https://github.com/toyokumo/kintone-query-builder-js/pull/18#issue-492932583
