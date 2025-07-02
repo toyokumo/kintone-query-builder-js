@@ -3,7 +3,7 @@ import { KintoneQueryError } from './kintone-query-error';
 import { KintoneQueryBufferElement } from './kintone-query-buffer-element';
 import type { ConjType } from './kintone-query-buffer-interface';
 
-export type Operator = '=' | '<' | '>' | '<=' | '>=' | '!=' | 'in' | 'not in' | 'like' | 'not like';
+export type Operator = '=' | '<' | '>' | '<=' | '>=' | '!=' | 'in' | 'not in' | 'like' | 'not like' | 'is' | 'is not';
 
 type ValueType = string | number | (string | number)[];
 
@@ -97,6 +97,14 @@ export class KintoneQueryExpression {
           `Invalid value type: In case operator === 'in', value must be array, but given ${typeof value}`,
         );
       }
+    }
+    if (operator === 'is' || operator === 'is not') {
+      if (value !== 'empty') {
+        throw new KintoneQueryError(
+          `Invalid value for ${operator} operator: only 'empty' is allowed, but given ${value}`,
+        );
+      }
+      return `${variable} ${operator} ${value}`;
     }
     return `${variable} ${operator} ${KintoneQueryExpression.valueToString(value)}`;
   }

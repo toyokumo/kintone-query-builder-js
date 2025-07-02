@@ -40,6 +40,18 @@ describe('Parse Monadic Condition', () => {
   });
 
   it.each([
+    ['field is empty', 'field is empty'],
+    ['フィールド is empty', 'フィールド is empty'],
+    ['$id is empty', '$id is empty'],
+    ['  field   is   empty  ', 'field is empty'],
+    ['field is not empty', 'field is not empty'],
+    ['フィールド is not empty', 'フィールド is not empty'],
+    ['  field   is   not   empty  ', 'field is not empty'],
+  ])('parse is-condition', (query, expected) => {
+    expect(parser.parse(query).build()).toEqual(expected);
+  });
+
+  it.each([
     ['field=LOGINUSER()', 'field = LOGINUSER()'],
     ['field=PRIMARY_ORGANIZATION()', 'field = PRIMARY_ORGANIZATION()'],
     ['field=NOW()', 'field = NOW()'],

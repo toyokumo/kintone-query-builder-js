@@ -12,15 +12,18 @@ const queryBnf = `query           ::= SPACES? conditions? order_by_clause? limit
 conditions      ::= and_conditions (SPACES 'or' SPACES and_conditions)*
 and_conditions  ::= parenethesized (SPACES 'and' SPACES parenethesized)*
 parenethesized  ::= condition | '(' conditions ')'
-condition       ::= comp_condition | in_condition | like_condition
+condition       ::= comp_condition | in_condition | like_condition | is_condition
 comp_condition  ::= field comp_operator value
 in_condition    ::= field in_operator values
 like_condition  ::= field like_operator string
+is_condition    ::= field is_operator is_value
 field           ::= '$id' | (FIELD_FIRST (FIELD_FIRST | [0-9])*) ('.' (FIELD_FIRST (FIELD_FIRST | [0-9])*))?
 FIELD_FIRST     ::= [a-z] | [A-Z] | '_' | [#x80-#xFFFF]
 comp_operator   ::= SPACES? ('!'? '=' | '>=' | '<=' | '>' | '<') SPACES?
 in_operator     ::= SPACES ('not' SPACES)? 'in' SPACES
 like_operator   ::= SPACES ('not' SPACES)? 'like' SPACES
+is_operator     ::= SPACES 'is' SPACES ('not' SPACES)?
+is_value        ::= 'empty'
 values          ::= '(' SPACES? value (SPACES? ',' SPACES? value)* SPACES? ')'
 value           ::= number | string | function
 

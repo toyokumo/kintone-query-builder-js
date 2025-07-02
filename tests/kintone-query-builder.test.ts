@@ -44,6 +44,14 @@ describe('Build Conditions', () => {
     expect(query2).toEqual('favorite not in ("kiwi","cherry")');
   });
 
+  it('build is condition', () => {
+    const query0 = new KintoneQueryBuilder().where('field', 'is', 'empty').build();
+    expect(query0).toEqual('field is empty');
+
+    const query1 = new KintoneQueryBuilder().where('description', 'is not', 'empty').build();
+    expect(query1).toEqual('description is not empty');
+  });
+
   it.each([
     ['user', '=', 'LOGINUSER()', 'user = LOGINUSER()'],
     ['org', '=', 'PRIMARY_ORGANIZATION()', 'org = PRIMARY_ORGANIZATION()'],
