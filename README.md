@@ -1,6 +1,5 @@
 # Kintone Query Builder
 
-[![CircleCI](https://circleci.com/gh/toyokumo/kintone-query-builder-js.svg?style=svg)](https://circleci.com/gh/toyokumo/kintone-query-builder-js)
 [![npm version](https://badge.fury.io/js/kintone-query-builder.svg)](https://badge.fury.io/js/kintone-query-builder)
 
 Query builder for [Kintone REST API](https://developer.kintone.io/hc/en-us/articles/213149287/) in JavaScript.
