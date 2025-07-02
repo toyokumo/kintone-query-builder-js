@@ -17,7 +17,8 @@
     "format:prettier": "prettier --write",
     "format-all": "npm run format \"./**/*.ts\"",
     "format-all:eslint": "eslint --fix \"./**/*.ts\"",
-    "format-all:prettier": "prettier --write \"./**/*.ts\""
+    "format-all:prettier": "prettier --write \"./**/*.ts\"",
+    "prepack": "npm run build"
   },
   "keywords": [
     "kintone"
