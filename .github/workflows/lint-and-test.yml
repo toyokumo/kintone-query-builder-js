@@ -1,0 +1,32 @@
+name: Lint and Test
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run Prettier check
+        run: npx prettier --check '**/*.ts'
+
+      - name: Run ESLint check
+        run: npx eslint src tests --ext .ts
+
+      - name: Run TypeScript compiler check
+        run: npx tsc
+
+      - name: Run Test
+        run: npm test
