@@ -1,3 +1,6 @@
+## 0.1.7
+fix string value quoting: escape backslashes and match functions exactly by @masaru87. (#38)
+
 ## 0.1.6
 support `is` operator by @shutakano. (#37)
 
