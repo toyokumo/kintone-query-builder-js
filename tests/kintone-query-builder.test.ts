@@ -76,8 +76,23 @@ describe('Build Conditions', () => {
     ['time', '=', 'LAST_MONTH(1)', 'time = LAST_MONTH(1)'],
     ['time', '=', 'LAST_MONTH(81)', 'time = "LAST_MONTH(81)"'],
     ['time', '=', 'THIS_YEAR()', 'time = THIS_YEAR()'],
+    // a value is a function only when it is exactly a function, not when it merely contains one
+    ['memo', '=', 'I said NOW() loudly', 'memo = "I said NOW() loudly"'],
+    ['memo', 'like', 'TODAY(): stand-up', 'memo like "TODAY(): stand-up"'],
+    ['memo', '=', 'NOW()) or (salary > 1000000', 'memo = "NOW()) or (salary > 1000000"'],
+    ['time', '=', ' NOW()', 'time = " NOW()"'],
   ])('build condition with function', (a, b, c, expected) => {
     const query = new KintoneQueryBuilder().where(a, b as Operator, c).build();
+    expect(query).toEqual(expected);
+  });
+
+  it.each([
+    ['name', 'say "hi"', 'name = "say \\"hi\\""'],
+    ['path', 'C:\\', 'path = "C:\\\\"'],
+    ['path', 'C:\\dir\\file', 'path = "C:\\\\dir\\\\file"'],
+    ['name', 'a\\"b', 'name = "a\\\\\\"b"'],
+  ])('escape double quotes and backslashes in a string value', (field, value, expected) => {
+    const query = new KintoneQueryBuilder().where(field, '=', value).build();
     expect(query).toEqual(expected);
   });
 });

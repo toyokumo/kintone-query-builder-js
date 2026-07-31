@@ -70,11 +70,11 @@ export class KintoneQueryExpression {
       /NEXT_YEAR\(\)/,
     ];
 
-    return regExps.some((r) => s.match(r));
+    return regExps.some((r) => new RegExp(`^(?:${r.source})$`).test(s));
   }
 
-  private static escapeDoubleQuote(s: string): string {
-    return s.split('"').join('\\"');
+  private static escapeStringValue(s: string): string {
+    return s.replace(/[\\"]/g, '\\$&');
   }
 
   private static valueToString(value: ValueType): string {
@@ -82,7 +82,7 @@ export class KintoneQueryExpression {
       if (KintoneQueryExpression.funcCheck(value)) {
         return value;
       }
-      return `"${KintoneQueryExpression.escapeDoubleQuote(value)}"`;
+      return `"${KintoneQueryExpression.escapeStringValue(value)}"`;
     }
     if (typeof value === 'number') {
       return `${value}`;
